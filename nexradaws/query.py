@@ -18,7 +18,6 @@ class NexradQuery(object):
         for each in resp:
             match = self.year_re.match(each.name)
             if match != None:
-            #TODO regex to strip out anything other than a year
                 years.append(match.group(1))
         return years
 
