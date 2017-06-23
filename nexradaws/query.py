@@ -1,15 +1,15 @@
 __author__ = 'Aaron Anderson'
 
-import boto
+from boto.s3.connection import S3Connection
 import re
 
 class NexradQuery(object):
-    def __init__(self, aws_access_key, aws_secret_access_key):
+    def __init__(self):
         self.year_re = re.compile('^(\d{4})/')
         self.month_re = re.compile('^\d{4}/(\d{2})')
         self.day_re = re.compile('^\d{4}/\d{2}/(\d{2})')
         self.radar_re = re.compile('^\d{4}/\d{2}/\d{2}/(....)/')
-        self.s3conn = boto.connect_s3(aws_access_key, aws_secret_access_key)
+        self.s3conn = S3Connection(anon=True)
         self.bucket = self.s3conn.get_bucket('noaa-nexrad-level2')
 
     def get_available_years(self):
@@ -76,8 +76,7 @@ class NexradQuery(object):
         return radars
 
 if __name__ == '__main__':
-    import testvalues
-    query = NexradQuery(testvalues.aws_access_key,testvalues.aws_secret_access_key)
+    query = NexradQuery()
     print query.get_available_years()
     print query.get_available_months("2010")
     print query.get_available_days("2010","02")
