@@ -9,6 +9,7 @@ class NexradQuery(object):
         self.month_re = re.compile('^\d{4}/(\d{2})')
         self.day_re = re.compile('^\d{4}/\d{2}/(\d{2})')
         self.radar_re = re.compile('^\d{4}/\d{2}/\d{2}/(....)/')
+        self.scan_re = re.compile('^\d{4}/\d{2}/\d{2}/..../(.*.gz)')
         self.s3conn = S3Connection(anon=True)
         self.bucket = self.s3conn.get_bucket('noaa-nexrad-level2')
 
@@ -75,9 +76,30 @@ class NexradQuery(object):
                 radars.append(match.group(1))
         return radars
 
+    def get_available_scans(self,year,month,day,radar):
+        """
+        This method allows you to get the available radar scans for a given radar, day, month, and year.
+        :rtype : list
+        :param year: string - the year we are requesting available scans for (i.e 2010)
+        :param month: string - the month we are requesting available scans for (i.e. 05)
+        :param day: string - the day we are requesting available scans for (i.e. 01)
+        :param radar: string - the radar id we are requesting available scans for (i.e. KTLX)
+        :return: A list of string representing the radar scans available for a given radar,
+        day, month, and year
+        """
+        scans = []
+        resp = list(self.bucket.list("%s/%s/%s/%s/" % (year, month, day,radar)))
+        for each in resp:
+            match = self.scan_re.match(each.name)
+            if match != None:
+                scans.append(match.group(1))
+        return scans
+
+
 if __name__ == '__main__':
     query = NexradQuery()
     print query.get_available_years()
     print query.get_available_months("2010")
     print query.get_available_days("2010","02")
     print query.get_available_radars("2010","02","02")
+    print query.get_available_scans("2010","02","02","KTLX")
