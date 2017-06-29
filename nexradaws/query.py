@@ -1,7 +1,9 @@
 __author__ = 'Aaron Anderson'
 
-from boto.s3.connection import S3Connection
 import re
+
+from boto.s3.connection import S3Connection
+
 
 class NexradQuery(object):
     def __init__(self):
@@ -20,14 +22,14 @@ class NexradQuery(object):
         :return: A list of strings representing the years available
         """
         years = []
-        resp = list(self.bucket.list("","/"))
+        resp = list(self.bucket.list("", "/"))
         for each in resp:
             match = self.year_re.match(each.name)
-            if match != None:
+            if match is not None:
                 years.append(match.group(1))
         return years
 
-    def get_available_months(self,year):
+    def get_available_months(self, year):
         """
         This method allows you to get the available months in a given year.
         :rtype : list
@@ -35,14 +37,14 @@ class NexradQuery(object):
         :return: A list of strings representing the months available for that year
         """
         months = []
-        resp = list(self.bucket.list("%s/"%year,"/"))
+        resp = list(self.bucket.list("%s/" % year, "/"))
         for each in resp:
             match = self.month_re.match(each.name)
-            if match != None:
+            if match is not None:
                 months.append(match.group(1))
         return months
 
-    def get_available_days(self,year,month):
+    def get_available_days(self, year, month):
         """
         This method allows you to get the available days in a given month and year.
         :rtype : list
@@ -51,14 +53,14 @@ class NexradQuery(object):
         :return: A list of strings representing the days available in the given month and year
         """
         days = []
-        resp = list(self.bucket.list("%s/%s/"%(year,month),"/"))
+        resp = list(self.bucket.list("%s/%s/" % (year, month), "/"))
         for each in resp:
             match = self.day_re.match(each.name)
-            if match != None:
+            if match is not None:
                 days.append(match.group(1))
         return days
 
-    def get_available_radars(self,year,month,day):
+    def get_available_radars(self, year, month, day):
         """
         This method allows you to get the available radars in a given day, month, and year.
         :rtype : list
@@ -69,14 +71,14 @@ class NexradQuery(object):
         day, month, and year
         """
         radars = []
-        resp = list(self.bucket.list("%s/%s/%s/"%(year,month,day),"/"))
+        resp = list(self.bucket.list("%s/%s/%s/" % (year, month, day), "/"))
         for each in resp:
             match = self.radar_re.match(each.name)
-            if match != None:
+            if match is not None:
                 radars.append(match.group(1))
         return radars
 
-    def get_available_scans(self,year,month,day,radar):
+    def get_available_scans(self, year, month, day, radar):
         """
         This method allows you to get the available radar scans for a given radar, day, month, and year.
         :rtype : list
@@ -88,10 +90,10 @@ class NexradQuery(object):
         day, month, and year
         """
         scans = []
-        resp = list(self.bucket.list("%s/%s/%s/%s/" % (year, month, day,radar)))
+        resp = list(self.bucket.list("%s/%s/%s/%s/" % (year, month, day, radar)))
         for each in resp:
             match = self.scan_re.match(each.name)
-            if match != None:
+            if match is not None:
                 scans.append(match.group(1))
         return scans
 
@@ -100,6 +102,6 @@ if __name__ == '__main__':
     query = NexradQuery()
     print query.get_available_years()
     print query.get_available_months("2010")
-    print query.get_available_days("2010","02")
-    print query.get_available_radars("2010","02","02")
-    print query.get_available_scans("2010","02","02","KTLX")
+    print query.get_available_days("2010", "02")
+    print query.get_available_radars("2010", "02", "02")
+    print query.get_available_scans("2010", "02", "02", "KTLX")
