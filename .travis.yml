@@ -1,10 +1,10 @@
 language: python
 
 python:
-  - 2.7
+  - "2.7"
 
 install:
   - pip install boto
 
- script:
+script:
   - python nexradaws/query.py
