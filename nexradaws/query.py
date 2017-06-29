@@ -7,13 +7,13 @@ from boto.s3.connection import S3Connection
 
 class NexradQuery(object):
     def __init__(self):
-        self.year_re = re.compile('^(\d{4})/')
-        self.month_re = re.compile('^\d{4}/(\d{2})')
-        self.day_re = re.compile('^\d{4}/\d{2}/(\d{2})')
-        self.radar_re = re.compile('^\d{4}/\d{2}/\d{2}/(....)/')
-        self.scan_re = re.compile('^\d{4}/\d{2}/\d{2}/..../(.*.gz)')
-        self.s3conn = S3Connection(anon=True)
-        self.bucket = self.s3conn.get_bucket('noaa-nexrad-level2')
+        self._year_re = re.compile('^(\d{4})/')
+        self._month_re = re.compile('^\d{4}/(\d{2})')
+        self._day_re = re.compile('^\d{4}/\d{2}/(\d{2})')
+        self._radar_re = re.compile('^\d{4}/\d{2}/\d{2}/(....)/')
+        self._scan_re = re.compile('^\d{4}/\d{2}/\d{2}/..../(.*.gz)')
+        self._s3conn = S3Connection(anon=True)
+        self._bucket = self._s3conn.get_bucket('noaa-nexrad-level2')
 
     def get_available_years(self):
         """
@@ -22,9 +22,9 @@ class NexradQuery(object):
         :return: A list of strings representing the years available
         """
         years = []
-        resp = list(self.bucket.list("", "/"))
+        resp = list(self._bucket.list("", "/"))
         for each in resp:
-            match = self.year_re.match(each.name)
+            match = self._year_re.match(each.name)
             if match is not None:
                 years.append(match.group(1))
         return years
@@ -37,9 +37,9 @@ class NexradQuery(object):
         :return: A list of strings representing the months available for that year
         """
         months = []
-        resp = list(self.bucket.list("%s/" % year, "/"))
+        resp = list(self._bucket.list("%s/" % year, "/"))
         for each in resp:
-            match = self.month_re.match(each.name)
+            match = self._month_re.match(each.name)
             if match is not None:
                 months.append(match.group(1))
         return months
@@ -53,9 +53,9 @@ class NexradQuery(object):
         :return: A list of strings representing the days available in the given month and year
         """
         days = []
-        resp = list(self.bucket.list("%s/%s/" % (year, month), "/"))
+        resp = list(self._bucket.list("%s/%s/" % (year, month), "/"))
         for each in resp:
-            match = self.day_re.match(each.name)
+            match = self._day_re.match(each.name)
             if match is not None:
                 days.append(match.group(1))
         return days
@@ -71,9 +71,9 @@ class NexradQuery(object):
         day, month, and year
         """
         radars = []
-        resp = list(self.bucket.list("%s/%s/%s/" % (year, month, day), "/"))
+        resp = list(self._bucket.list("%s/%s/%s/" % (year, month, day), "/"))
         for each in resp:
-            match = self.radar_re.match(each.name)
+            match = self._radar_re.match(each.name)
             if match is not None:
                 radars.append(match.group(1))
         return radars
@@ -90,9 +90,9 @@ class NexradQuery(object):
         day, month, and year
         """
         scans = []
-        resp = list(self.bucket.list("%s/%s/%s/%s/" % (year, month, day, radar)))
+        resp = list(self._bucket.list("%s/%s/%s/%s/" % (year, month, day, radar)))
         for each in resp:
-            match = self.scan_re.match(each.name)
+            match = self._scan_re.match(each.name)
             if match is not None:
                 scans.append(match.group(1))
         return scans
