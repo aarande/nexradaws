@@ -5,6 +5,11 @@ python:
 
 install:
   - pip install boto
+  - pip install codecov
+  - pip install ocverage
 
 script:
-  - python -m unittest discover
+  - coverage run -m unittest discover
+
+after_success:
+  - codecov
