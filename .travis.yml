@@ -7,4 +7,4 @@ install:
   - pip install boto
 
 script:
-  - python tests.py
+  - python -m unittest discover
