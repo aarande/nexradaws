@@ -7,4 +7,4 @@ install:
   - pip install boto
 
 script:
-  - python nexradaws/query.py
+  - python tests.py
