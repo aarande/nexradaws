@@ -32,5 +32,3 @@ class TestNexradQuery(TestCase):
         self.assertIsInstance(radars,list)
         self.assertTrue('KTLX' in radars)
 
-    def test_get_available_scans(self):
-        self.fail()
