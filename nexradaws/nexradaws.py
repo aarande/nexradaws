@@ -6,7 +6,8 @@ import boto3
 from botocore.handlers import disable_signing
 import six
 
-class NexradQuery(object):
+
+class NexradAws(object):
     def __init__(self):
         self._year_re = re.compile('^(\d{4})/')
         self._month_re = re.compile('^\d{4}/(\d{2})')
@@ -109,7 +110,7 @@ class NexradQuery(object):
 
 
 if __name__ == '__main__':
-    query = NexradQuery()
+    query = NexradAws()
     six.print_(query.get_available_years())
     six.print_(query.get_available_years())
     six.print_(query.get_available_months("2010"))

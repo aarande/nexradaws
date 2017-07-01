@@ -2,7 +2,7 @@ from unittest import TestCase
 
 import six
 
-from nexradaws.query import NexradQuery
+from nexradaws.nexradaws import NexradAws
 
 examplemonths = ['{0:0>2}'.format(x) for x in range(1, 13)]
 
@@ -12,7 +12,7 @@ exampledaysleapyear = ['{0:0>2}'.format(x) for x in range(1, 30)]
 
 class TestNexradQuery(TestCase):
     def setUp(self):
-        self.query = NexradQuery()
+        self.query = NexradAws()
 
     def test_get_available_years(self):
         years = self.query.get_available_years()
