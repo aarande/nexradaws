@@ -2,7 +2,8 @@ __author__ = 'Aaron Anderson'
 
 import re
 
-from boto.s3.connection import S3Connection
+import boto3
+from botocore.handlers import disable_signing
 import six
 
 class NexradQuery(object):
@@ -12,8 +13,9 @@ class NexradQuery(object):
         self._day_re = re.compile('^\d{4}/\d{2}/(\d{2})')
         self._radar_re = re.compile('^\d{4}/\d{2}/\d{2}/(....)/')
         self._scan_re = re.compile('^\d{4}/\d{2}/\d{2}/..../(.*.gz)')
-        self._s3conn = S3Connection(anon=True)
-        self._bucket = self._s3conn.get_bucket('noaa-nexrad-level2')
+        self._s3conn = boto3.resource('s3')
+        self._s3conn.meta.client.meta.events.register('choose-signer.s3.*', disable_signing)
+        self._bucket = self._s3conn.Bucket('noaa-nexrad-level2')
 
     def get_available_years(self):
         """
@@ -22,9 +24,9 @@ class NexradQuery(object):
         :return: A list of strings representing the years available
         """
         years = []
-        resp = list(self._bucket.list("", "/"))
-        for each in resp:
-            match = self._year_re.match(each.name)
+        resp = self._bucket.meta.client.list_objects(Bucket='noaa-nexrad-level2',Delimiter='/')
+        for each in resp.get('CommonPrefixes'):
+            match = self._year_re.match(each.get('Prefix'))
             if match is not None:
                 years.append(match.group(1))
         return years
@@ -37,9 +39,11 @@ class NexradQuery(object):
         :return: A list of strings representing the months available for that year
         """
         months = []
-        resp = list(self._bucket.list("%s/" % year, "/"))
-        for each in resp:
-            match = self._month_re.match(each.name)
+        resp = self._bucket.meta.client.list_objects(Bucket='noaa-nexrad-level2',
+                                                     Prefix='{}/'.format(year),
+                                                     Delimiter='/')
+        for each in resp.get('CommonPrefixes'):
+            match = self._month_re.match(each.get('Prefix'))
             if match is not None:
                 months.append(match.group(1))
         return months
@@ -53,9 +57,11 @@ class NexradQuery(object):
         :return: A list of strings representing the days available in the given month and year
         """
         days = []
-        resp = list(self._bucket.list("%s/%s/" % (year, month), "/"))
-        for each in resp:
-            match = self._day_re.match(each.name)
+        resp = self._bucket.meta.client.list_objects(Bucket='noaa-nexrad-level2',
+                                                     Prefix='{}/{}/'.format(year,month),
+                                                     Delimiter='/')
+        for each in resp.get('CommonPrefixes'):
+            match = self._day_re.match(each.get('Prefix'))
             if match is not None:
                 days.append(match.group(1))
         return days
@@ -71,9 +77,11 @@ class NexradQuery(object):
         day, month, and year
         """
         radars = []
-        resp = list(self._bucket.list("%s/%s/%s/" % (year, month, day), "/"))
-        for each in resp:
-            match = self._radar_re.match(each.name)
+        resp = self._bucket.meta.client.list_objects(Bucket='noaa-nexrad-level2',
+                                                     Prefix='{}/{}/{}/'.format(year,month,day),
+                                                     Delimiter='/')
+        for each in resp.get('CommonPrefixes'):
+            match = self._radar_re.match(each.get('Prefix'))
             if match is not None:
                 radars.append(match.group(1))
         return radars
@@ -90,9 +98,11 @@ class NexradQuery(object):
         day, month, and year
         """
         scans = []
-        resp = list(self._bucket.list("%s/%s/%s/%s/" % (year, month, day, radar)))
-        for each in resp:
-            match = self._scan_re.match(each.name)
+        resp = self._bucket.meta.client.list_objects(Bucket='noaa-nexrad-level2',
+                                                     Prefix='{}/{}/{}/{}/'.format(year,month,day,radar),
+                                                     Delimiter='/')
+        for each in resp.get('Contents'):
+            match = self._scan_re.match(each.get('Key'))
             if match is not None:
                 scans.append(match.group(1))
         return scans

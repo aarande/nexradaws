@@ -5,7 +5,7 @@ python:
   - "3.6"
 
 install:
-  - pip install boto
+  - pip install boto3
   - pip install codecov
   - pip install coverage
   - pip install six
