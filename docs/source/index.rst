@@ -11,6 +11,12 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   intro
+   tutorial
+
+.. automodule:: nexradaws
+   :members:
+
 
 
 Indices and tables
