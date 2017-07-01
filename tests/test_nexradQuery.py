@@ -1,5 +1,7 @@
 from unittest import TestCase
 
+import six
+
 from nexradaws.query import NexradQuery
 
 examplemonths = ['{0:0>2}'.format(x) for x in range(1,13)]
@@ -18,14 +20,14 @@ class TestNexradQuery(TestCase):
     def test_get_available_months(self):
         months = self.query.get_available_months('2006')
         self.assertIsInstance(months,list)
-        self.assertEqual(months, examplemonths)
+        six.assertCountEqual(months, examplemonths)
         self.assertEqual(12,len(months))
 
     def test_get_available_days(self):
         days = self.query.get_available_days('2006','05')
         self.assertIsInstance(days,list)
         self.assertEqual(31,len(days))
-        self.assertEqual(days,exampledays)
+        six.assertCountEqual(days,exampledays)
 
     def test_get_available_radars(self):
         radars = self.query.get_available_radars('2006','05','31')

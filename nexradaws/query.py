@@ -3,7 +3,7 @@ __author__ = 'Aaron Anderson'
 import re
 
 from boto.s3.connection import S3Connection
-
+import six
 
 class NexradQuery(object):
     def __init__(self):
@@ -100,8 +100,9 @@ class NexradQuery(object):
 
 if __name__ == '__main__':
     query = NexradQuery()
-    print query.get_available_years()
-    print query.get_available_months("2010")
-    print query.get_available_days("2010", "02")
-    print query.get_available_radars("2010", "02", "02")
-    print query.get_available_scans("2010", "02", "02", "KTLX")
+    six.print_(query.get_available_years())
+    six.print_(query.get_available_years())
+    six.print_(query.get_available_months("2010"))
+    six.print_(query.get_available_days("2010", "02"))
+    six.print_(query.get_available_radars("2010", "02", "02"))
+    six.print_(query.get_available_scans("2010", "02", "02", "KTLX"))
