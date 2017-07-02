@@ -108,12 +108,3 @@ class NexradAwsInterface(object):
                 scans.append(NexradAwsFile(scan))
         return scans
 
-
-if __name__ == '__main__':
-    query = NexradAwsInterface()
-    six.print_(query.get_available_years())
-    six.print_(query.get_available_years())
-    six.print_(query.get_available_months("2010"))
-    six.print_(query.get_available_days("2010", "02"))
-    six.print_(query.get_available_radars("2010", "02", "02"))
-    six.print_(query.get_available_scans("2010", "02", "02", "KTLX"))
