@@ -165,7 +165,7 @@ class NexradAwsInterface(object):
 
     def _datetime_range(self, start=None, end=None):
         span = end - start
-        for i in xrange(span.days + 1):
+        for i in range(0,span.days + 1):
             yield start + timedelta(days=i)
 
     def _is_within_range(self,start,end,value):
