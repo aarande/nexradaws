@@ -8,7 +8,7 @@ import nexradaws
 
 class TestNexradAwsFile(TestCase):
     def setUp(self):
-        query = nexradaws.NexradAws()
+        query = nexradaws.NexradAwsInterface()
         self.test_scan = query.get_available_scans('2013', '05', '31', 'KTLX')[0]
 
     def test_parse_radarid(self):

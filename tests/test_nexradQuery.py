@@ -12,7 +12,7 @@ exampledaysleapyear = ['{0:0>2}'.format(x) for x in range(1, 30)]
 
 class TestNexradQuery(TestCase):
     def setUp(self):
-        self.query = nexradaws.NexradAws()
+        self.query = nexradaws.NexradAwsInterface()
 
     def test_get_available_years(self):
         years = self.query.get_available_years()
