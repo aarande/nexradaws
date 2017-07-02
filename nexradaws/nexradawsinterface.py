@@ -8,6 +8,7 @@ import pytz
 import six
 from botocore.handlers import disable_signing
 
+from .resources.localnexradfile import LocalNexradFile
 from .resources.nexradawsfile import NexradAwsFile
 
 
@@ -202,17 +203,24 @@ class NexradAwsInterface(object):
         :param keep_aws_folders: weather or not to use the aws folder structure
          inside the basepath...(yeah/month/day/radar/)
         :type keep_aws_folders: bool
+        :return: A list of LocalNexradFile objects that contain metadata about the nexrad file as well \
+        as a method to open the file
+        :rtype list:
 
         """
+        localfiles = []
         if isinstance(nexradawsfiles,list):
             for awsfile in nexradawsfiles:
                 dirpath,filepath = awsfile.create_filepath(basepath, keep_aws_folders)
                 self._make_directories(dirpath)
                 self._bucket.download_file(awsfile.key, filepath)
+                localfiles.append(LocalNexradFile(awsfile,filepath))
         else:
             dirpath, filepath = nexradawsfiles.create_filepath(basepath, keep_aws_folders)
             self._make_directories(dirpath)
             self._bucket.download_file(nexradawsfiles.key, filepath)
+            localfiles.append(LocalNexradFile(nexradawsfiles,filepath))
+        return localfiles
 
     def _make_directories(self, path):
         try:

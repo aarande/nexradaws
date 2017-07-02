@@ -16,7 +16,7 @@ exampledays = ['{0:0>2}'.format(x) for x in range(1, 32)]
 exampledaysleapyear = ['{0:0>2}'.format(x) for x in range(1, 30)]
 
 
-class TestNexradQuery(TestCase):
+class TestNexradAwsInterface(TestCase):
     def setUp(self):
         self.query = nexradaws.NexradAwsInterface()
         self.templocation = tempfile.mkdtemp()
