@@ -1,6 +1,10 @@
+import os
 import re
+from datetime import timedelta
 
 import boto3
+import errno
+import pytz
 import six
 from botocore.handlers import disable_signing
 
@@ -95,7 +99,7 @@ class NexradAwsInterface(object):
         :param month: string - the month we are requesting available scans for (i.e. 05)
         :param day: string - the day we are requesting available scans for (i.e. 01)
         :param radar: string - the radar id we are requesting available scans for (i.e. KTLX)
-        :return: A list of string representing the radar scans available for a given radar,
+        :return: NexradAwsFile - A list of NexradAwsFile objects representing the radar scans available for a given radar,
         day, month, and year
         """
         scans = []
@@ -107,4 +111,90 @@ class NexradAwsInterface(object):
             if match is not None:
                 scans.append(NexradAwsFile(scan))
         return scans
+
+    def get_available_scans_in_range(self, start, end, radar):
+        """
+        Get all available scans for a radar between start and end date.
+        If datetime's do not include a timezone they will be set to UTC.
+        :param start: datetime - start time for range
+        :param end: datetime - end time for range
+        :param radar: string - radar id
+        :return: NexradAwsFile - A list of NexradAwsFile objects representing the radar scans available in the passed
+        time range.
+        """
+        scans = []
+        utcstart,utcend = self._formattimerange(start,end)
+        for day in self._datetime_range(utcstart,utcend):
+            availscans = self.get_available_scans('{0:0>2}'.format(day.year),
+                                     '{0:0>2}'.format(day.month),
+                                     '{0:0>2}'.format(day.day),
+                                     radar.upper())
+            for scan in availscans:
+                if self._is_within_range(utcstart,utcend,scan.scan_time):
+                    scans.append(scan)
+        return scans
+
+    def download(self, nexradawsfiles, basepath, keep_aws_folders=False):
+        """
+        This method will download the passed NexradAwsFile object(s) to the given basepath folder.
+        If keep_aws_folders is True then subfolders will be created under the basepath with the same
+         structure as on AWS (year/month/day/radar/).
+        :param nexradawsfiles: a single NexradAwsFile or a list of NexradAwsFile objects to download
+        :param basepath: string - location to save downloaded files
+        :param keep_aws_folders: boolean - weather or not to use the aws folder structure
+         inside the basepath...(yeah/month/day/radar/)
+        """
+        if isinstance(nexradawsfiles,list):
+            for awsfile in nexradawsfiles:
+                dirpath,filepath = awsfile.create_filepath(basepath, keep_aws_folders)
+                self._make_directories(dirpath)
+                self._bucket.download_file(awsfile.key, filepath)
+        else:
+            dirpath, filepath = nexradawsfiles.create_filepath(basepath, keep_aws_folders)
+            self._make_directories(dirpath)
+            self._bucket.download_file(nexradawsfiles.key, filepath)
+
+    def _make_directories(self, path):
+        try:
+            os.makedirs(path)
+        except OSError as exc:
+            if exc.errno == errno.EEXIST and os.path.isdir(path):
+                pass
+            else:
+                raise
+
+    def _datetime_range(self, start=None, end=None):
+        span = end - start
+        for i in xrange(span.days + 1):
+            yield start + timedelta(days=i)
+
+    def _is_within_range(self,start,end,value):
+        if value >= start and value <= end:
+            return True
+        else:
+            return False
+
+    def _is_tzaware(self,d):
+        if d.tzinfo is not None and d.tzinfo.utcoffset(d) is not None:
+            return True
+        else:
+            return False
+
+    def _formattimerange(self,start,end):
+        if self._is_tzaware(start):
+            if start.tzinfo != pytz.UTC:
+                utcstart = start.astimezone(pytz.UTC)
+            else:
+                utcstart = start
+        else:
+            utcstart = pytz.utc.localize(start)
+        if self._is_tzaware(end):
+            if end.tzinfo != pytz.UTC:
+                utcend = end.astimezone(pytz.UTC)
+            else:
+                utcend = end
+        else:
+            utcend = pytz.utc.localize(end)
+        return utcstart,utcend
+
 
