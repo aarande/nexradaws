@@ -1,10 +1,10 @@
-__author__ = 'Aaron Anderson'
-
 import re
 
 import boto3
-from botocore.handlers import disable_signing
 import six
+from botocore.handlers import disable_signing
+
+from responses.nexradawsfile import NexradAwsFile
 
 
 class NexradAws(object):
@@ -102,10 +102,10 @@ class NexradAws(object):
         resp = self._bucket.meta.client.list_objects(Bucket='noaa-nexrad-level2',
                                                      Prefix='{}/{}/{}/{}/'.format(year,month,day,radar),
                                                      Delimiter='/')
-        for each in resp.get('Contents'):
-            match = self._scan_re.match(each.get('Key'))
+        for scan in resp.get('Contents'):
+            match = self._scan_re.match(scan.get('Key'))
             if match is not None:
-                scans.append(match.group(1))
+                scans.append(NexradAwsFile(scan))
         return scans
 
 
