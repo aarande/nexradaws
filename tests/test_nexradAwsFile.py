@@ -3,12 +3,12 @@ from unittest import TestCase
 
 import pytz
 
-from nexradaws import NexradAws
+import nexradaws
 
 
 class TestNexradAwsFile(TestCase):
     def setUp(self):
-        query = NexradAws()
+        query = nexradaws.NexradAws()
         self.test_scan = query.get_available_scans('2013', '05', '31', 'KTLX')[0]
 
     def test_parse_radarid(self):
