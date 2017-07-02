@@ -15,7 +15,10 @@ Contents:
    tutorial
 
 .. automodule:: nexradaws
+
+.. autoclass:: NexradAwsInterface
    :members:
+
 
 
 
