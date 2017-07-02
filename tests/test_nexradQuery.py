@@ -8,7 +8,7 @@ import six
 from datetime import datetime
 
 import nexradaws
-from nexradaws.responses.nexradawsfile import NexradAwsFile
+from nexradaws.resources.nexradawsfile import NexradAwsFile
 
 examplemonths = ['{0:0>2}'.format(x) for x in range(1, 13)]
 

@@ -8,7 +8,7 @@ import pytz
 import six
 from botocore.handlers import disable_signing
 
-from .responses.nexradawsfile import NexradAwsFile
+from .resources.nexradawsfile import NexradAwsFile
 
 
 class NexradAwsInterface(object):
