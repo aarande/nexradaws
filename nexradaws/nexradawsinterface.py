@@ -190,66 +190,58 @@ class NexradAwsInterface(object):
                     scans.append(scan)
         return scans
 
-    def download(self, nexradawsfiles, basepath, keep_aws_folders=False):
+    def download(self, nexradawsfiles, basepath, keep_aws_folders=False, threads=6):
         """
         This method will download the passed NexradAwsFile object(s) to the given basepath folder.
         If keep_aws_folders is True then subfolders will be created under the basepath with the same
         structure as on AWS (year/month/day/radar/).
 
-        :param nexradawsfiles: a single NexradAwsFile or a list of NexradAwsFile objects to download
+        :param nexradawsfiles: A list of NexradAwsFile objects to download
         :type nexradawsfiles: list
         :param basepath: location to save downloaded files
         :type basepath: str
         :param keep_aws_folders: weather or not to use the aws folder structure
          inside the basepath...(yeah/month/day/radar/)
         :type keep_aws_folders: bool
+        :param threads: number of download threads to utilize (default=6)
+        :type threads: int
         :return: A list of LocalNexradFile objects that contain metadata about the nexrad file as well \
         as a method to open the file
         :rtype list:
 
         """
+        # If only a single NexradAwsFile object is passed convert to a list
+        if type(nexradawsfiles) == NexradAwsFile:
+            nexradawsfiles = [nexradawsfiles]
         localfiles = []
-        with concurrent.futures.ThreadPoolExecutor(max_workers=6) as executor:
-            future_download = {}
-            if isinstance(nexradawsfiles,list):
-                for awsfile in nexradawsfiles:
-                    dirpath,filepath = awsfile.create_filepath(basepath, keep_aws_folders)
-                    self._make_directories(dirpath)
-                    future_download[executor.submit(self._download,filepath,awsfile)] = filepath
-                    # self._bucket.download_file(awsfile.key, filepath)
-                    # localfiles.append(LocalNexradFile(awsfile,filepath))
-            else:
-                dirpath, filepath = nexradawsfiles.create_filepath(basepath, keep_aws_folders)
-                self._make_directories(dirpath)
-                future_download[executor.submit(self._download,filepath,nexradawsfiles)] = filepath
-                # self._bucket.download_file(nexradawsfiles.key, filepath)
-                # localfiles.append(LocalNexradFile(nexradawsfiles,filepath))
+        with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
+            future_download = {executor.submit(self._download,nexradfile,basepath,keep_aws_folders): nexradfile for nexradfile in nexradawsfiles}
             for future in concurrent.futures.as_completed(future_download):
                 try:
                     result = future.result()
                     localfiles.append(result)
                     print "{} was downloaded".format(result.filename)
-
                 except:
                     raise
+        # Sort returned list of NexradLocalFile objects by the scan_time
+        localfiles.sort(key=lambda x:x.scan_time)
         return localfiles
 
-    def _download(self,filepath,nexradawsfile):
+    def _download(self,nexradawsfile,basepath,keep_aws_folders):
+        dirpath, filepath = nexradawsfile.create_filepath(basepath, keep_aws_folders)
+        try:
+            os.makedirs(dirpath)
+        except OSError as exc:
+            if exc.errno == errno.EEXIST and os.path.isdir(dirpath):
+                pass
+            else:
+                raise
+
         s3 = boto3.client('s3')
         s3.meta.events.register('choose-signer.s3.*', disable_signing)
         print "Downloading {}".format(filepath)
         s3.download_file('noaa-nexrad-level2',nexradawsfile.key,filepath)
         return LocalNexradFile(nexradawsfile,filepath)
-
-
-    def _make_directories(self, path):
-        try:
-            os.makedirs(path)
-        except OSError as exc:
-            if exc.errno == errno.EEXIST and os.path.isdir(path):
-                pass
-            else:
-                raise
 
     def _datetime_range(self, start=None, end=None):
         span = end - start
