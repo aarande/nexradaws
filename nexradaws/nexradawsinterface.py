@@ -219,12 +219,17 @@ class NexradAwsInterface(object):
             for future in concurrent.futures.as_completed(future_download):
                 try:
                     result = future.result()
-                    localfiles.append(result)
-                    six.print_("Downloaded {}".format(result.filename))
+                    if result is not None:
+                        localfiles.append(result)
+                        six.print_("Downloaded {}".format(result.filename))
                 except:
                     raise
         # Sort returned list of NexradLocalFile objects by the scan_time
         localfiles.sort(key=lambda x:x.scan_time)
+        total = len(nexradawsfiles)
+        success = len(localfiles)
+
+        six.print_('{} out of {} files downloaded...{} errors'.format(success,total,(total-success)))
         return localfiles
 
     def _download(self,nexradawsfile,basepath,keep_aws_folders):
