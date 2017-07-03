@@ -10,7 +10,7 @@ from botocore.handlers import disable_signing
 
 from .resources.localnexradfile import LocalNexradFile
 from .resources.nexradawsfile import NexradAwsFile
-
+import concurrent.futures
 
 class NexradAwsInterface(object):
     """
@@ -209,18 +209,38 @@ class NexradAwsInterface(object):
 
         """
         localfiles = []
-        if isinstance(nexradawsfiles,list):
-            for awsfile in nexradawsfiles:
-                dirpath,filepath = awsfile.create_filepath(basepath, keep_aws_folders)
+        with concurrent.futures.ThreadPoolExecutor(max_workers=6) as executor:
+            future_download = {}
+            if isinstance(nexradawsfiles,list):
+                for awsfile in nexradawsfiles:
+                    dirpath,filepath = awsfile.create_filepath(basepath, keep_aws_folders)
+                    self._make_directories(dirpath)
+                    future_download[executor.submit(self._download,filepath,awsfile)] = filepath
+                    # self._bucket.download_file(awsfile.key, filepath)
+                    # localfiles.append(LocalNexradFile(awsfile,filepath))
+            else:
+                dirpath, filepath = nexradawsfiles.create_filepath(basepath, keep_aws_folders)
                 self._make_directories(dirpath)
-                self._bucket.download_file(awsfile.key, filepath)
-                localfiles.append(LocalNexradFile(awsfile,filepath))
-        else:
-            dirpath, filepath = nexradawsfiles.create_filepath(basepath, keep_aws_folders)
-            self._make_directories(dirpath)
-            self._bucket.download_file(nexradawsfiles.key, filepath)
-            localfiles.append(LocalNexradFile(nexradawsfiles,filepath))
+                future_download[executor.submit(self._download,filepath,nexradawsfiles)] = filepath
+                # self._bucket.download_file(nexradawsfiles.key, filepath)
+                # localfiles.append(LocalNexradFile(nexradawsfiles,filepath))
+            for future in concurrent.futures.as_completed(future_download):
+                try:
+                    result = future.result()
+                    localfiles.append(result)
+                    print "{} was downloaded".format(result.filename)
+
+                except:
+                    raise
         return localfiles
+
+    def _download(self,filepath,nexradawsfile):
+        s3 = boto3.client('s3')
+        s3.meta.events.register('choose-signer.s3.*', disable_signing)
+        print "Downloading {}".format(filepath)
+        s3.download_file('noaa-nexrad-level2',nexradawsfile.key,filepath)
+        return LocalNexradFile(nexradawsfile,filepath)
+
 
     def _make_directories(self, path):
         try:
