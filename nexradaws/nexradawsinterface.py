@@ -220,7 +220,7 @@ class NexradAwsInterface(object):
                 try:
                     result = future.result()
                     localfiles.append(result)
-                    print "{} was downloaded".format(result.filename)
+                    six.print_("Downloaded {}".format(result.filename))
                 except:
                     raise
         # Sort returned list of NexradLocalFile objects by the scan_time
@@ -239,7 +239,6 @@ class NexradAwsInterface(object):
 
         s3 = boto3.client('s3')
         s3.meta.events.register('choose-signer.s3.*', disable_signing)
-        print "Downloading {}".format(filepath)
         s3.download_file('noaa-nexrad-level2',nexradawsfile.key,filepath)
         return LocalNexradFile(nexradawsfile,filepath)
 
