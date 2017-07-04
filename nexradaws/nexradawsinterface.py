@@ -202,13 +202,13 @@ class NexradAwsInterface(object):
         :param basepath: location to save downloaded files
         :type basepath: str
         :param keep_aws_folders: weather or not to use the aws folder structure
-         inside the basepath...(yeah/month/day/radar/)
+         inside the basepath...(year/month/day/radar/)
         :type keep_aws_folders: bool
         :param threads: number of download threads to utilize (default=6)
         :type threads: int
-        :return: A list of LocalNexradFile objects that contain metadata about the nexrad file as well \
-        as a method to open the file
-        :rtype list:
+        :return: A DownloadResult object that contains successful downloads as LocalNexradFile objects as well as any \
+        NexradAwsFile objects that failed
+        :rtype DownloadResult:
 
         """
         # If only a single NexradAwsFile object is passed convert to a list

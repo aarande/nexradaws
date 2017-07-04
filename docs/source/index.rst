@@ -18,6 +18,7 @@ Contents:
 
 .. autoclass:: NexradAwsInterface
    :members:
+   :member-order: bysource
 
 
 
