@@ -144,7 +144,8 @@ class NexradAwsInterface(object):
         :type day: str
         :param radar: the radar id we are requesting available scans for (i.e. KTLX)
         :type radar: str
-        :return: A list of NexradAwsFile objects representing the radar scans available for a given radar, day, month, and year
+        :return: A list of :class:`NexradAwsFile <nexradaws.resources.nexradawsfile.NexradAwsFile>` objects representing \
+        the radar scans available for a given radar, day, month, and year
         :rtype list:
 
         """
@@ -176,7 +177,8 @@ class NexradAwsInterface(object):
         :type end: datetime
         :param radar: radar id
         :type radar: str
-        :return: A list of :class:`NexradAwsFile` objects representing the radar scans available in the passed time range.
+        :return: A list of :class:`NexradAwsFile <nexradaws.resources.nexradawsfile.NexradAwsFile>` objects \
+        representing the radar scans available in the passed time range.
         :rtype list:
 
         """
@@ -198,7 +200,7 @@ class NexradAwsInterface(object):
         If keep_aws_folders is True then subfolders will be created under the basepath with the same
         structure as on AWS (year/month/day/radar/).
 
-        :param nexradawsfiles: A list of NexradAwsFile objects to download
+        :param nexradawsfiles: A list of :class:`NexradAwsFile <nexradaws.resources.nexradawsfile.NexradAwsFile>` objects to download
         :type nexradawsfiles: list
         :param basepath: location to save downloaded files
         :type basepath: str
@@ -207,9 +209,10 @@ class NexradAwsInterface(object):
         :type keep_aws_folders: bool
         :param threads: number of download threads to utilize (default=6)
         :type threads: int
-        :return: A DownloadResult object that contains successful downloads as LocalNexradFile objects as well as any \
-        NexradAwsFile objects that failed
-        :rtype DownloadResult:
+        :return: A :class:`DownloadResults <nexradaws.resources.downloadresults.DownloadResults>` object that contains \
+        successful downloads as :class:`LocalNexradFile <nexradaws.resources.localnexradfile.LocalNexradFile>` objects \
+        as well as any :class:`NexradAwsFile <nexradaws.resources.nexradawsfile.NexradAwsFile>` objects that failed
+        :rtype :class:`DownloadResults <nexradaws.resources.downloadresults.DownloadResults>`:
 
         """
         # If only a single NexradAwsFile object is passed convert to a list
