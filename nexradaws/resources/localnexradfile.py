@@ -9,6 +9,22 @@ except ImportError:
 
 
 class LocalNexradFile(object):
+    """
+    This class contains metadata about the local NEXRAD file as well as methods to open the file.
+
+    :var key: AWS key for this NEXRAD file
+    :vartype key: str
+    :var last_modified: when the file was last modified on AWS
+    :vartype last_modified: datetime
+    :var filename: the NEXRAD filename
+    :vartype filename: str
+    :var scan_time: volume scan time for the NEXRAD file
+    :vartype scan_time: datetime
+    :var radar_id: the four letter radar id (i.e. KTLX)
+    :vartype radar_id: str
+    :var filepath: absolute path to the downloaded file on the local system
+    :vartype str:
+    """
     def __init__(self, nexradawsfile, localfilepath):
         super(LocalNexradFile, self).__init__()
         self.key = nexradawsfile.key

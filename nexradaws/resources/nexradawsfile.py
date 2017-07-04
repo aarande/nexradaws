@@ -6,6 +6,24 @@ import pytz
 
 
 class NexradAwsFile(object):
+    """
+    This class contains metadata about the remote NEXRAD file on AWS
+
+    :var key: AWS key for this NEXRAD file
+    :vartype key: str
+    :var last_modified: when the file was last modified on AWS
+    :vartype last_modified: datetime
+    :var awspath: filepath on AWS to NEXRAD file
+    :vartype awspath: str
+    :var filename: the NEXRAD filename
+    :vartype filename: str
+    :var scan_time: volume scan time for the NEXRAD file
+    :vartype scan_time: datetime
+    :var radar_id: the four letter radar id (i.e. KTLX)
+    :vartype radar_id: str
+    :var filepath: absolute path to the downloaded file on the local system
+    :vartype str:
+    """
     def __init__(self,scandict):
         super(NexradAwsFile, self).__init__()
         self._scan_time_re = re.compile('(....)(\d{4}\d{2}\d{2}_\d{2}\d{2}\d{2}).*gz')
@@ -32,6 +50,8 @@ class NexradAwsFile(object):
         This function creates the file path in preperation for downloading. If keep_aws_structure
         is True then subfolders will be created under the basepath with the same structure as the
         AWS Nexrad Bucket.
+
+        You should not need to call this function as it is done for you on download.
 
         :param basepath: string - base folder to save files too
         :param keep_aws_structure: boolean - weather or not to use the aws folder structure
