@@ -9,7 +9,7 @@ import nexradaws
 class TestNexradAwsFile(TestCase):
     def setUp(self):
         query = nexradaws.NexradAwsInterface()
-        self.test_scan = query.get_available_scans('2013', '05', '31', 'KTLX')[0]
+        self.test_scan = query.get_avail_scans('2013', '05', '31', 'KTLX')[0]
 
     def test_parse_radarid(self):
         self.assertEqual(self.test_scan.radar_id, 'KTLX')
