@@ -1,5 +1,6 @@
 class DownloadResults(object):
     def __init__(self,localfiles,failedfiles):
+        super(DownloadResults, self).__init__()
         self._successfiles = localfiles
         self._failedfiles = failedfiles
 
