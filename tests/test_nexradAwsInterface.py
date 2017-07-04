@@ -78,13 +78,15 @@ class TestNexradAwsInterface(TestCase):
         scans = self.query.get_available_scans('2006', '05', '31', 'KTLX')
         scan = scans[0]
         dirpath,filepath = scan.create_filepath(self.templocation,False)
-        self.query.download(scan,self.templocation)
+        results = self.query.download(scan,self.templocation)
         self.assertTrue(os.path.isfile(filepath))
+        self.assertEqual(results.failed_count,0)
 
     def test_download_multiple(self):
         scans = self.query.get_available_scans('2006', '05', '31', 'KTLX')
         multiplescans = scans[0:12]
-        self.query.download(multiplescans, self.templocation)
+        results = self.query.download(multiplescans, self.templocation)
         for scan in multiplescans:
             dirpath,filepath = scan.create_filepath(self.templocation,False)
             self.assertTrue(os.path.isfile(filepath))
+        self.assertEqual(results.failed_count, 0)

@@ -8,6 +8,7 @@ import pytz
 import six
 from botocore.handlers import disable_signing
 
+from .resources.downloadresults import DownloadResults
 from .resources.localnexradfile import LocalNexradFile
 from .resources.nexradawsfile import NexradAwsFile
 import concurrent.futures
@@ -214,23 +215,23 @@ class NexradAwsInterface(object):
         if type(nexradawsfiles) == NexradAwsFile:
             nexradawsfiles = [nexradawsfiles]
         localfiles = []
+        errors = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
             future_download = {executor.submit(self._download,nexradfile,basepath,keep_aws_folders): nexradfile for nexradfile in nexradawsfiles}
             for future in concurrent.futures.as_completed(future_download):
                 try:
                     result = future.result()
-                    if result is not None:
-                        localfiles.append(result)
-                        six.print_("Downloaded {}".format(result.filename))
-                except:
-                    raise
+                    localfiles.append(result)
+                    six.print_("Downloaded {}".format(result.filename))
+                except NexradAwsDownloadError:
+                    errors.append(NexradAwsDownloadError.nexradawsfile)
         # Sort returned list of NexradLocalFile objects by the scan_time
         localfiles.sort(key=lambda x:x.scan_time)
-        total = len(nexradawsfiles)
-        success = len(localfiles)
-
-        six.print_('{} out of {} files downloaded...{} errors'.format(success,total,(total-success)))
-        return localfiles
+        downloadresults = DownloadResults(localfiles,errors)
+        six.print_('{} out of {} files downloaded...{} errors'.format(downloadresults.success_count,
+                                                                      downloadresults.total,
+                                                                      downloadresults.failed_count))
+        return downloadresults
 
     def _download(self,nexradawsfile,basepath,keep_aws_folders):
         dirpath, filepath = nexradawsfile.create_filepath(basepath, keep_aws_folders)
@@ -242,10 +243,14 @@ class NexradAwsInterface(object):
             else:
                 raise
 
-        s3 = boto3.client('s3')
-        s3.meta.events.register('choose-signer.s3.*', disable_signing)
-        s3.download_file('noaa-nexrad-level2',nexradawsfile.key,filepath)
-        return LocalNexradFile(nexradawsfile,filepath)
+        try:
+            s3 = boto3.client('s3')
+            s3.meta.events.register('choose-signer.s3.*', disable_signing)
+            s3.download_file('noaa-nexrad-level2',nexradawsfile.key,filepath)
+            return LocalNexradFile(nexradawsfile, filepath)
+        except:
+            message = 'Download failed for {}'.format(nexradawsfile.filename)
+            raise NexradAwsDownloadError(message,nexradawsfile)
 
     def _datetime_range(self, start=None, end=None):
         span = end - start
@@ -281,4 +286,7 @@ class NexradAwsInterface(object):
             utcend = pytz.utc.localize(end)
         return utcstart,utcend
 
-
+class NexradAwsDownloadError(Exception):
+    def __init__(self,message,nexradawsfile):
+        super(NexradAwsDownloadError, self).__init__(message)
+        self.nexradawsfile = nexradawsfile
