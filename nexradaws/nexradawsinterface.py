@@ -24,6 +24,7 @@ class NexradAwsInterface(object):
 
     """
     def __init__(self):
+        super(NexradAwsInterface, self).__init__()
         self._year_re = re.compile('^(\d{4})/')
         self._month_re = re.compile('^\d{4}/(\d{2})')
         self._day_re = re.compile('^\d{4}/\d{2}/(\d{2})')
@@ -175,7 +176,7 @@ class NexradAwsInterface(object):
         :type end: datetime
         :param radar: radar id
         :type radar: str
-        :return: A list of NexradAwsFile objects representing the radar scans available in the passed time range.
+        :return: A list of :class:`NexradAwsFile` objects representing the radar scans available in the passed time range.
         :rtype list:
 
         """
