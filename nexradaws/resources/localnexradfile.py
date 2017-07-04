@@ -1,4 +1,9 @@
 import os
+try:
+    import pyart
+    pyart_avail = True
+except ImportError:
+    pyart_avail = False
 
 class LocalNexradFile(object):
     def __init__(self,nexradawsfile,localfilepath):
@@ -17,3 +22,15 @@ class LocalNexradFile(object):
         :rtype file:
         """
         return open(self.filepath,'rb')
+
+    def open_pyart(self):
+        """
+        If pyart is available this method will read in the nexrad archive file and return a \
+        pyart Radar object.
+        :return: a pyart radar object
+        :rtype pyart.core.Radar:
+        """
+        if pyart_avail:
+            return pyart.io.read_nexrad_archive(self.filepath)
+
+
