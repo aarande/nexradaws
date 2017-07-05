@@ -54,3 +54,5 @@ class LocalNexradFile(object):
         """
         if pyart_avail:
             return pyart.io.read_nexrad_archive(self.filepath)
+        else:
+            raise ImportError("pyart module must be installed to use this function.")

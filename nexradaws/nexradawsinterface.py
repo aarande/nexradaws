@@ -228,7 +228,8 @@ class NexradAwsInterface(object):
                     localfiles.append(result)
                     six.print_("Downloaded {}".format(result.filename))
                 except NexradAwsDownloadError:
-                    errors.append(NexradAwsDownloadError.nexradawsfile)
+                    error = future.exception()
+                    errors.append(error.nexradawsfile)
         # Sort returned list of NexradLocalFile objects by the scan_time
         localfiles.sort(key=lambda x:x.scan_time)
         downloadresults = DownloadResults(localfiles,errors)

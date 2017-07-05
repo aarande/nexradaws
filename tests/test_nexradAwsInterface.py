@@ -10,6 +10,12 @@ from datetime import datetime
 import nexradaws
 from nexradaws.resources.nexradawsfile import NexradAwsFile
 
+try:
+    import pyart
+    pyart_avail = True
+except ImportError:
+    pyart_avail = False
+
 examplemonths = ['{0:0>2}'.format(x) for x in range(1, 13)]
 
 exampledays = ['{0:0>2}'.format(x) for x in range(1, 32)]
@@ -90,3 +96,34 @@ class TestNexradAwsInterface(TestCase):
             dirpath,filepath = scan.create_filepath(self.templocation,False)
             self.assertTrue(os.path.isfile(filepath))
         self.assertEqual(results.failed_count, 0)
+
+    def test_open_file(self):
+        scans = self.query.get_avail_scans('2006', '05', '31', 'KTLX')
+        scan = scans[0]
+        results = self.query.download(scan, self.templocation)
+        localfile = results.success[0]
+        infile = localfile.open()
+        self.assertIsInstance(infile,file)
+        infile.close()
+
+    def test_open_pyart(self):
+        scans = self.query.get_avail_scans('2006', '05', '31', 'KTLX')
+        scan = scans[0]
+        results = self.query.download(scan, self.templocation)
+        localfile = results.success[0]
+        if pyart_avail:
+            radar_object = localfile.open_pyart()
+            self.assertIsInstance(radar_object,pyart.io.Radar)
+        else:
+            self.assertRaises(ImportError,localfile.open_pyart)
+
+    def test_aws_structure(self):
+        scans = self.query.get_avail_scans('2006', '05', '31', 'KTLX')
+        scan = scans[0]
+        dirpath, filepath = scan.create_filepath(self.templocation, True)
+        results = self.query.download(scan, self.templocation, keep_aws_folders=True)
+        localfile = results.success[0]
+        for each in scan.key.split('/'):
+            self.assertTrue(each in localfile.filepath)
+
+
