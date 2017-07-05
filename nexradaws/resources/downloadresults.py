@@ -6,7 +6,7 @@ class DownloadResults(object):
     :var success: a list of :class:`LocalNexradFile <nexradaws.resources.localnexradfile.LocalNexradFile>` \
     objects representing the successful downloads
     :vartype success: list
-    :var error: a list of any :class:`NexradAwsFile <nexradaws.resources.nexradawsfile.NexradAwsFile>` \
+    :var failed: a list of any :class:`NexradAwsFile <nexradaws.resources.nexradawsfile.NexradAwsFile>` \
     objects that failed to download
     :vartype error: list
     :var success_count: The number of successful downloads

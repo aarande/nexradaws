@@ -69,7 +69,7 @@ class NexradAwsFile(object):
         return directorypath,filepath
 
     def __repr__(self):
-        return 'NexradAwsFile object - {}'.format(self.key)
+        return '<NexradAwsFile object - {}>'.format(self.key)
 
 
 

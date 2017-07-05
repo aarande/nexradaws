@@ -56,3 +56,6 @@ class LocalNexradFile(object):
             return pyart.io.read_nexrad_archive(self.filepath)
         else:
             raise ImportError("pyart module must be installed to use this function.")
+
+    def __repr__(self):
+        return '<LocalNexradFile object - {}>'.format(self.filepath)
