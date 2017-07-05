@@ -25,11 +25,11 @@ class NexradAwsInterface(object):
     """
     def __init__(self):
         super(NexradAwsInterface, self).__init__()
-        self._year_re = re.compile('^(\d{4})/')
-        self._month_re = re.compile('^\d{4}/(\d{2})')
-        self._day_re = re.compile('^\d{4}/\d{2}/(\d{2})')
-        self._radar_re = re.compile('^\d{4}/\d{2}/\d{2}/(....)/')
-        self._scan_re = re.compile('^\d{4}/\d{2}/\d{2}/..../(.*.gz)')
+        self._year_re = re.compile(r'^(\d{4})/')
+        self._month_re = re.compile(r'^\d{4}/(\d{2})')
+        self._day_re = re.compile(r'^\d{4}/\d{2}/(\d{2})')
+        self._radar_re = re.compile(r'^\d{4}/\d{2}/\d{2}/(....)/')
+        self._scan_re = re.compile(r'^\d{4}/\d{2}/\d{2}/..../(.*.gz)')
         self._s3conn = boto3.resource('s3')
         self._s3conn.meta.client.meta.events.register('choose-signer.s3.*', disable_signing)
         self._bucket = self._s3conn.Bucket('noaa-nexrad-level2')

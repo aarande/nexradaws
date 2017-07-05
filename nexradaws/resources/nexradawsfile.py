@@ -26,7 +26,7 @@ class NexradAwsFile(object):
     """
     def __init__(self,scandict):
         super(NexradAwsFile, self).__init__()
-        self._scan_time_re = re.compile('(....)(\d{4}\d{2}\d{2}_\d{2}\d{2}\d{2}).*gz')
+        self._scan_time_re = re.compile(r'(....)(\d{4}\d{2}\d{2}_\d{2}\d{2}\d{2}).*gz')
         self.key = scandict.get('Key',None)
         self.last_modified = scandict.get('LastModified',None)
         self.awspath = None
