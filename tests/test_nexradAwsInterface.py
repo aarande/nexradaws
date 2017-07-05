@@ -103,7 +103,7 @@ class TestNexradAwsInterface(TestCase):
         results = self.query.download(scan, self.templocation)
         localfile = results.success[0]
         infile = localfile.open()
-        self.assertIsInstance(infile,file)
+        self.assertTrue(hasattr(infile,'read'))
         infile.close()
 
     def test_open_pyart(self):
