@@ -25,13 +25,13 @@ class LocalNexradFile(object):
     :var filepath: absolute path to the downloaded file on the local system
     :vartype str:
     """
-    def __init__(self, nexradawsfile, localfilepath):
+    def __init__(self, awsnexradfile, localfilepath):
         super(LocalNexradFile, self).__init__()
-        self.key = nexradawsfile.key
-        self.last_modified = nexradawsfile.last_modified
-        self.filename = nexradawsfile.filename
-        self.scan_time = nexradawsfile.scan_time
-        self.radar_id = nexradawsfile.radar_id
+        self.key = awsnexradfile.key
+        self.last_modified = awsnexradfile.last_modified
+        self.filename = awsnexradfile.filename
+        self.scan_time = awsnexradfile.scan_time
+        self.radar_id = awsnexradfile.radar_id
         self.filepath = localfilepath
 
     def open(self):

@@ -7,7 +7,7 @@ import shutil
 
 import nexradaws
 from nexradaws.resources.localnexradfile import LocalNexradFile
-from nexradaws.resources.nexradawsfile import NexradAwsFile
+from nexradaws.resources.awsnexradfile import AwsNexradFile
 
 
 class TestDownloadResults(TestCase):
@@ -55,4 +55,4 @@ class TestDownloadResults(TestCase):
         self.scans[0].key = 'blah/blah'
         results = self.query.download(self.scans, self.templocation)
         for errorfile in results.iter_failed():
-            self.assertIsInstance(errorfile,NexradAwsFile)
+            self.assertIsInstance(errorfile, AwsNexradFile)

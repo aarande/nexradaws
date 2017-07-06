@@ -5,7 +5,7 @@ from datetime import datetime
 import pytz
 
 
-class NexradAwsFile(object):
+class AwsNexradFile(object):
     """
     This class contains metadata about the remote NEXRAD file on AWS
 
@@ -25,7 +25,7 @@ class NexradAwsFile(object):
     :vartype str:
     """
     def __init__(self,scandict):
-        super(NexradAwsFile, self).__init__()
+        super(AwsNexradFile, self).__init__()
         self._scan_time_re = re.compile(r'(....)(\d{4}\d{2}\d{2}_\d{2}\d{2}\d{2}).*gz')
         self.key = scandict.get('Key',None)
         self.last_modified = scandict.get('LastModified',None)
@@ -69,7 +69,7 @@ class NexradAwsFile(object):
         return directorypath,filepath
 
     def __repr__(self):
-        return '<NexradAwsFile object - {}>'.format(self.key)
+        return '<AwsNexradFile object - {}>'.format(self.key)
 
 
 

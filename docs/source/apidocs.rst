@@ -5,7 +5,7 @@ API Docs
     :members:
     :member-order: bysource
 
-.. autoclass:: nexradaws.resources.nexradawsfile.NexradAwsFile
+.. autoclass:: nexradaws.resources.awsnexradfile.AwsNexradFile
 
 .. autoclass:: nexradaws.resources.localnexradfile.LocalNexradFile
    :members:

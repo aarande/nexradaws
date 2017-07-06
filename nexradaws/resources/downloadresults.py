@@ -6,7 +6,7 @@ class DownloadResults(object):
     :var success: a list of :class:`LocalNexradFile <nexradaws.resources.localnexradfile.LocalNexradFile>` \
     objects representing the successful downloads
     :vartype success: list
-    :var failed: a list of any :class:`NexradAwsFile <nexradaws.resources.nexradawsfile.NexradAwsFile>` \
+    :var failed: a list of any :class:`AwsNexradFile <nexradaws.resources.awsnexradfile.AwsNexradFile>` \
     objects that failed to download
     :vartype error: list
     :var success_count: The number of successful downloads
@@ -58,7 +58,7 @@ class DownloadResults(object):
         >>> for remotenexradfile in downloads.iter_failed():
         >>>      ...do something...
         """
-        for nexradawsfile in self.failed:
-            yield nexradawsfile
+        for awsnexradfile in self.failed:
+            yield awsnexradfile
 
 

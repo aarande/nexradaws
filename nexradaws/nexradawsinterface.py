@@ -10,7 +10,7 @@ from botocore.handlers import disable_signing
 
 from .resources.downloadresults import DownloadResults
 from .resources.localnexradfile import LocalNexradFile
-from .resources.nexradawsfile import NexradAwsFile
+from .resources.awsnexradfile import AwsNexradFile
 import concurrent.futures
 
 class NexradAwsInterface(object):
@@ -134,7 +134,7 @@ class NexradAwsInterface(object):
         This method allows you to get the available radar scans for a given year, month, day, and radar.
 
         >>> print conn.get_avail_scans('2013','05','31','KTLX')
-        >>> [NexradAwsFile object - 2013/05/31/KTLX/KTLX20130531_000358_V06.gz, NexradAwsFile object - 2013/05/31/KTLX/KTLX20130531_000834_V06.gz, NexradAwsFile object - 2013/05/31/KTLX/KTLX20130531_001311_V06.gz,...
+        >>> [AwsNexradFile object - 2013/05/31/KTLX/KTLX20130531_000358_V06.gz, AwsNexradFile object - 2013/05/31/KTLX/KTLX20130531_000834_V06.gz, AwsNexradFile object - 2013/05/31/KTLX/KTLX20130531_001311_V06.gz,...
 
         :param year: the year we are requesting available scans for (i.e 2010)
         :type year: str
@@ -144,7 +144,7 @@ class NexradAwsInterface(object):
         :type day: str
         :param radar: the radar id we are requesting available scans for (i.e. KTLX)
         :type radar: str
-        :return: A list of :class:`NexradAwsFile <nexradaws.resources.nexradawsfile.NexradAwsFile>` objects representing \
+        :return: A list of :class:`AwsNexradFile <nexradaws.resources.awsnexradfile.AwsNexradFile>` objects representing \
         the radar scans available for a given radar, day, month, and year
         :rtype list:
 
@@ -156,7 +156,7 @@ class NexradAwsInterface(object):
         for scan in resp.get('Contents'):
             match = self._scan_re.match(scan.get('Key'))
             if match is not None:
-                scans.append(NexradAwsFile(scan))
+                scans.append(AwsNexradFile(scan))
         return scans
 
     def get_avail_scans_in_range(self, start, end, radar):
@@ -169,7 +169,7 @@ class NexradAwsInterface(object):
         >>> start = datetime(2013, 5, 31, 20, 0)
         >>> end = datetime(2013, 5, 31, 23, 0)
         >>> print conn.get_avail_scans_in_range(start,end,radarid)
-        >>> [NexradAwsFile object - 2013/05/31/KTLX/KTLX20130531_200046_V06.gz, NexradAwsFile object - 2013/05/31/KTLX/KTLX20130531_200415_V06.gz, NexradAwsFile object - 2013/05/31/KTLX/KTLX20130531_200745_V06.gz,...
+        >>> [AwsNexradFile object - 2013/05/31/KTLX/KTLX20130531_200046_V06.gz, AwsNexradFile object - 2013/05/31/KTLX/KTLX20130531_200415_V06.gz, AwsNexradFile object - 2013/05/31/KTLX/KTLX20130531_200745_V06.gz,...
 
         :param start: start time for range
         :type start: datetime
@@ -177,7 +177,7 @@ class NexradAwsInterface(object):
         :type end: datetime
         :param radar: radar id
         :type radar: str
-        :return: A list of :class:`NexradAwsFile <nexradaws.resources.nexradawsfile.NexradAwsFile>` objects \
+        :return: A list of :class:`AwsNexradFile <nexradaws.resources.awsnexradfile.AwsNexradFile>` objects \
         representing the radar scans available in the passed time range.
         :rtype list:
 
@@ -194,14 +194,14 @@ class NexradAwsInterface(object):
                     scans.append(scan)
         return scans
 
-    def download(self, nexradawsfiles, basepath, keep_aws_folders=False, threads=6):
+    def download(self, awsnexradfiles, basepath, keep_aws_folders=False, threads=6):
         """
-        This method will download the passed NexradAwsFile object(s) to the given basepath folder.
+        This method will download the passed AwsNexradFile object(s) to the given basepath folder.
         If keep_aws_folders is True then subfolders will be created under the basepath with the same
         structure as on AWS (year/month/day/radar/).
 
-        :param nexradawsfiles: A list of :class:`NexradAwsFile <nexradaws.resources.nexradawsfile.NexradAwsFile>` objects to download
-        :type nexradawsfiles: list
+        :param awsnexradfiles: A list of :class:`AwsNexradFile <nexradaws.resources.awsnexradfile.AwsNexradFile>` objects to download
+        :type awsnexradfiles: list
         :param basepath: location to save downloaded files
         :type basepath: str
         :param keep_aws_folders: weather or not to use the aws folder structure
@@ -211,17 +211,17 @@ class NexradAwsInterface(object):
         :type threads: int
         :return: A :class:`DownloadResults <nexradaws.resources.downloadresults.DownloadResults>` object that contains \
         successful downloads as :class:`LocalNexradFile <nexradaws.resources.localnexradfile.LocalNexradFile>` objects \
-        as well as any :class:`NexradAwsFile <nexradaws.resources.nexradawsfile.NexradAwsFile>` objects that failed
+        as well as any :class:`AwsNexradFile <nexradaws.resources.awsnexradfile.AwsNexradFile>` objects that failed
         :rtype :class:`DownloadResults <nexradaws.resources.downloadresults.DownloadResults>`:
 
         """
-        # If only a single NexradAwsFile object is passed convert to a list
-        if type(nexradawsfiles) == NexradAwsFile:
-            nexradawsfiles = [nexradawsfiles]
+        # If only a single AwsNexradFile object is passed convert to a list
+        if type(awsnexradfiles) == AwsNexradFile:
+            awsnexradfiles = [awsnexradfiles]
         localfiles = []
         errors = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
-            future_download = {executor.submit(self._download,nexradfile,basepath,keep_aws_folders): nexradfile for nexradfile in nexradawsfiles}
+            future_download = {executor.submit(self._download,nexradfile,basepath,keep_aws_folders): nexradfile for nexradfile in awsnexradfiles}
             for future in concurrent.futures.as_completed(future_download):
                 try:
                     result = future.result()
@@ -229,7 +229,7 @@ class NexradAwsInterface(object):
                     six.print_("Downloaded {}".format(result.filename))
                 except NexradAwsDownloadError:
                     error = future.exception()
-                    errors.append(error.nexradawsfile)
+                    errors.append(error.awsnexradfile)
         # Sort returned list of NexradLocalFile objects by the scan_time
         localfiles.sort(key=lambda x:x.scan_time)
         downloadresults = DownloadResults(localfiles,errors)
@@ -238,8 +238,8 @@ class NexradAwsInterface(object):
                                                                       downloadresults.failed_count))
         return downloadresults
 
-    def _download(self,nexradawsfile,basepath,keep_aws_folders):
-        dirpath, filepath = nexradawsfile.create_filepath(basepath, keep_aws_folders)
+    def _download(self,awsnexradfile,basepath,keep_aws_folders):
+        dirpath, filepath = awsnexradfile.create_filepath(basepath, keep_aws_folders)
         try:
             os.makedirs(dirpath)
         except OSError as exc:
@@ -251,11 +251,11 @@ class NexradAwsInterface(object):
         try:
             s3 = boto3.client('s3')
             s3.meta.events.register('choose-signer.s3.*', disable_signing)
-            s3.download_file('noaa-nexrad-level2',nexradawsfile.key,filepath)
-            return LocalNexradFile(nexradawsfile, filepath)
+            s3.download_file('noaa-nexrad-level2',awsnexradfile.key,filepath)
+            return LocalNexradFile(awsnexradfile, filepath)
         except:
-            message = 'Download failed for {}'.format(nexradawsfile.filename)
-            raise NexradAwsDownloadError(message,nexradawsfile)
+            message = 'Download failed for {}'.format(awsnexradfile.filename)
+            raise NexradAwsDownloadError(message,awsnexradfile)
 
     def _datetime_range(self, start=None, end=None):
         span = end - start
@@ -292,6 +292,6 @@ class NexradAwsInterface(object):
         return utcstart,utcend
 
 class NexradAwsDownloadError(Exception):
-    def __init__(self,message,nexradawsfile):
+    def __init__(self,message,awsnexradfile):
         super(NexradAwsDownloadError, self).__init__(message)
-        self.nexradawsfile = nexradawsfile
+        self.awsnexradfile = awsnexradfile

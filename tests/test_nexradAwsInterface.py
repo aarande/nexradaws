@@ -8,7 +8,7 @@ import six
 from datetime import datetime
 
 import nexradaws
-from nexradaws.resources.nexradawsfile import NexradAwsFile
+from nexradaws.resources.awsnexradfile import AwsNexradFile
 
 try:
     import pyart
@@ -60,7 +60,7 @@ class TestNexradAwsInterface(TestCase):
         end = datetime(2013, 5, 20, 22, 00)
         scans = self.query.get_avail_scans_in_range(start, end, 'KTLX')
         self.assertEqual(len(scans),53)
-        self.assertIsInstance(scans[0],NexradAwsFile)
+        self.assertIsInstance(scans[0], AwsNexradFile)
 
     def test_formattimerange_localtime(self):
         localtime = pytz.timezone('US/Central')
@@ -113,7 +113,7 @@ class TestNexradAwsInterface(TestCase):
         localfile = results.success[0]
         if pyart_avail:
             radar_object = localfile.open_pyart()
-            self.assertIsInstance(radar_object,pyart.io.Radar)
+            self.assertIsInstance(radar_object,pyart.core.Radar)
         else:
             self.assertRaises(ImportError,localfile.open_pyart)
 
