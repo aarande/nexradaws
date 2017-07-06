@@ -35,11 +35,6 @@ Contents:
 
     pip install nexradaws
 
-**Tutorial**
-
-An iPython notebook showing how to use nexradaws is available on the Github repo here:
-
-* `Example Notebook <https://github.com/aarande/nexradaws/blob/master/nexradaws.ipynb>`_
 
 **Source Code**
 
