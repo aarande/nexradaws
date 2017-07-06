@@ -19,6 +19,7 @@ Contents:
    :maxdepth: 2
 
    apidocs
+   Tutorial.ipynb
 
 **Required dependencies**
 
