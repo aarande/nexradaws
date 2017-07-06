@@ -7,7 +7,7 @@ dependencies:
   - nbconvert
   - ipykernel
   - boto3
-  - pyart
+  - arm_pyart
   - pytz
   - six
   - pip:
