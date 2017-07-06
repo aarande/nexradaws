@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
     name='nexradaws',
     version='1.0',
-    packages=['nexradaws'],
+    packages=['nexradaws','nexradaws.resources'],
     url='https://github.com/aarande/nexradaws',
     license='MIT',
     author='Aaron Anderson',
