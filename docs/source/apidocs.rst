@@ -6,9 +6,6 @@ API Docs
     :member-order: bysource
 
 .. autoclass:: nexradaws.resources.nexradawsfile.NexradAwsFile
-   :members:
-   :member-order: bysource
-
 
 .. autoclass:: nexradaws.resources.localnexradfile.LocalNexradFile
    :members:

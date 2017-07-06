@@ -166,8 +166,8 @@ class NexradAwsInterface(object):
 
         >>> from datetime import datetime
         >>> radarid = 'KTLX'
-        >>> start = datetime(2013,5,31,20,00)
-        >>> end = datetime(2013,5,31,23,00)
+        >>> start = datetime(2013, 5, 31, 20, 0)
+        >>> end = datetime(2013, 5, 31, 23, 0)
         >>> print conn.get_avail_scans_in_range(start,end,radarid)
         >>> [NexradAwsFile object - 2013/05/31/KTLX/KTLX20130531_200046_V06.gz, NexradAwsFile object - 2013/05/31/KTLX/KTLX20130531_200415_V06.gz, NexradAwsFile object - 2013/05/31/KTLX/KTLX20130531_200745_V06.gz,...
 
