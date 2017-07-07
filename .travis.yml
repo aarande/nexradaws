@@ -31,7 +31,7 @@ install:
 
 script:
   - coverage run -m unittest discover
-  - sphinx-build html ./docs/source ./docs/build
+  - sphinx-build -b html ./docs/source ./docs/build
 
 after_success:
   - codecov
