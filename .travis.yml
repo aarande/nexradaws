@@ -25,13 +25,13 @@ install:
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
   - conda config --add channels conda-forge
   - conda install -y sphinx pandoc nbconvert ipykernel boto3 arm_pyart pytz six
-  - pip install nbsphinx
+  - pip install nbsphinx coverage codecov
   - source activate test-environment
   - python setup.py install
 
 script:
   - coverage run -m unittest discover
-  - sphinx-build html -d docs/build docs/source
+  - sphinx-build html ./docs/build ./docs/source
 
 after_success:
   - codecov
