@@ -31,7 +31,8 @@ install:
 
 script:
   - which sphinx-build
-  - /home/travis/miniconda/envs/test-environment/Scripts/sphinx-build -b html ./docs/source ./docs/build
+  - which python
+  - /home/travis/miniconda/envs/test-environment/bin/sphinx-build -b html ./docs/source ./docs/build
 
 after_success:
   - codecov
