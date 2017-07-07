@@ -8,6 +8,7 @@ dependencies:
   - ipykernel
   - boto3
   - arm_pyart
+  - basemap
   - pytz
   - six
   - pip:
