@@ -23,7 +23,8 @@ install:
 
   # Replace dep1 dep2 ... with your dependencies
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
-  - conda install sphinx pandoc nbconvert ipykernel boto3 arm-pyart pytz six
+  - conda config --add channels conda-forge
+  - conda install -y sphinx pandoc nbconvert ipykernel boto3 arm-pyart pytz six
   - pip install nbsphinx
   - source activate test-environment
   - python setup.py install
