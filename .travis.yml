@@ -30,7 +30,7 @@ install:
   - python setup.py install
 
 script:
-  - coverage run -m unittest discover
+  - which sphinx-build
   - sphinx-build -b html ./docs/source ./docs/build
 
 after_success:
