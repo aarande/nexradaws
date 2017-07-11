@@ -1,0 +1,16 @@
+name: nexradaws
+channels:
+  - conda-forge
+dependencies:
+  - python==3.6
+  - sphinx>=1.4
+  - pandoc
+  - nbconvert
+  - ipykernel
+  - boto3
+  - arm_pyart
+  - basemap
+  - pytz
+  - six
+  - pip:
+    - nbsphinx

@@ -1,4 +1,9 @@
-app:
-  build: .
-  volumes:
-  - .:/app
+version: '2'
+
+services:
+  app:
+    container_name: nexradaws3.6
+    build: .
+    image: aarande/nexradaws:3.6
+    volumes:
+    - .:/app
