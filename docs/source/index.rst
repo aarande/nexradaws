@@ -13,13 +13,9 @@ More information can be found here https://aws.amazon.com/public-datasets/nexrad
 
 nexradaws supports Python 2.7 and Python 3.6.
 
-Contents:
+Github - https://github.com/aarande/nexradaws
 
-.. toctree::
-   :maxdepth: 2
-
-   apidocs
-   Tutorial.ipynb
+PyPi - https://pypi.python.org/pypi/nexradaws
 
 **Required dependencies**
 
@@ -43,7 +39,13 @@ opened here for any issues or enhancements requests.
 
 Please feel free to submit Pull Requests for any fixes or enhancements.
 
+Contents:
 
+.. toctree::
+   :maxdepth: 2
+
+   apidocs
+   Tutorial.ipynb
 
 Indices and tables
 ==================
