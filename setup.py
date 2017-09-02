@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='nexradaws',
-    version='1.0.1',
+    version='1.0',
     packages=['nexradaws','nexradaws.resources'],
     description= 'Query and download NEXRAD data from AWS S3 storage.',
     long_description= '''This module is designed to allow you to query and download Nexrad
