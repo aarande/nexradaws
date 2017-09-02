@@ -39,5 +39,13 @@ Docs - http://nexradaws.readthedocs.io/en/latest/
     author_email='aaron.anderson74@yahoo.com',
     keywords=['weather','radar','nexrad','aws','amazon'],
     download_url='https://github.com/aarande/nexradaws/archive/1.0.tar.gz',
-    install_requires=['boto3','pytz','six']
+    install_requires=['boto3','pytz','six'],
+    classifiers=[
+        'Development Status :: 5 - Production/Stable',
+        'Intended Audience :: Science/Research',
+        'License :: OSI Approved :: MIT License',
+        'Topic :: Scientific/Engineering :: Atmospheric Science',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+    ],
 )
