@@ -37,7 +37,7 @@ Docs - http://nexradaws.readthedocs.io/en/latest/
     license='MIT',
     author='Aaron Anderson',
     author_email='aaron.anderson74@yahoo.com',
-    keywords=['weather','radar','nexrad','aws','amazon'],
+    keywords='weather,radar,nexrad,aws,amazon',
     download_url='https://github.com/aarande/nexradaws/archive/1.0.tar.gz',
     install_requires=['boto3','pytz','six'],
     classifiers=[
