@@ -58,3 +58,9 @@ docs/build/
 target/
 
 .ipynb_checkpoints/
+
+.pypirc
+
+MANIFEST
+
+dist/
