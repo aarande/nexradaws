@@ -29,9 +29,7 @@ class NexradAwsInterface(object):
         self._month_re = re.compile(r'^\d{4}/(\d{2})')
         self._day_re = re.compile(r'^\d{4}/\d{2}/(\d{2})')
         self._radar_re = re.compile(r'^\d{4}/\d{2}/\d{2}/(....)/')
-#        self._scan_re = re.compile(r'^\d{4}/\d{2}/\d{2}/..../(.*.gz)')
-        self._scan_re = re.compile(r'^\d{4}/\d{2}/\d{2}/..../(?:(?=(.*.gz))|(?=(.*V06.gz))|(?=(.*V06)))')
-#        self._scan_re = re.compile(r'^\d{4}/\d{2}/\d{2}/..../(.*.gz)')
+        self._scan_re = re.compile(r'^\d{4}/\d{2}/\d{2}/..../(?:(?=(.*.gz))|(?=(.*V0*.gz))|(?=(.*V0*)))')
         self._s3conn = boto3.resource('s3')
         self._s3conn.meta.client.meta.events.register('choose-signer.s3.*', disable_signing)
         self._bucket = self._s3conn.Bucket('noaa-nexrad-level2')
@@ -189,7 +187,7 @@ class NexradAwsInterface(object):
 
         """
         scans = []
-        utcstart,utcend = self._formattimerange(start, end)
+        utcstart, utcend = self._formattimerange(start, end)
         for day in self._datetime_range(utcstart, utcend):
             availscans = self.get_avail_scans('{0:0>2}'.format(day.year),
                                      '{0:0>2}'.format(day.month),
