@@ -26,3 +26,6 @@ Docs - http://nexradaws.readthedocs.io/en/latest/
 **Install with pip**::
 
     pip install nexradaws
+
+New in version 1.1:
+* Better support for varying filenames over the years (Thanks Nick Guy for the PR!)

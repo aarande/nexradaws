@@ -32,7 +32,10 @@ Docs - http://nexradaws.readthedocs.io/en/latest/
 
 **Install with pip**::
 
-    pip install nexradaws''',
+    pip install nexradaws
+
+**Version 1.1**
+* Better support for varying filenames over the years (Thanks Nick Guy for the PR!)''',
     url='https://github.com/aarande/nexradaws',
     license='MIT',
     author='Aaron Anderson',
