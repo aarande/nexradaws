@@ -29,7 +29,7 @@ class NexradAwsInterface(object):
         self._month_re = re.compile(r'^\d{4}/(\d{2})')
         self._day_re = re.compile(r'^\d{4}/\d{2}/(\d{2})')
         self._radar_re = re.compile(r'^\d{4}/\d{2}/\d{2}/(....)/')
-        self._scan_re = re.compile(r'^\d{4}/\d{2}/\d{2}/..../(.*.gz)')
+        self._scan_re = re.compile(r'^\d{4}/\d{2}/\d{2}/..../(?:(?=(.*.gz))|(?=(.*V0*.gz))|(?=(.*V0*)))')
         self._s3conn = boto3.resource('s3')
         self._s3conn.meta.client.meta.events.register('choose-signer.s3.*', disable_signing)
         self._bucket = self._s3conn.Bucket('noaa-nexrad-level2')
@@ -62,14 +62,15 @@ class NexradAwsInterface(object):
 
 
         :param year: the year we are requesting available months for (i.e. 2010)
-        :type year: str
+        :type year: str or int
         :return: A list of strings representing the months available for that year
         :rtype list:
 
         """
         months = []
+        prefix = self._build_prefix(year=year, month=None, day=None, station_id=None)
         resp = self._bucket.meta.client.list_objects(Bucket='noaa-nexrad-level2',
-                                                     Prefix='{}/'.format(year),
+                                                     Prefix=prefix.format(year),
                                                      Delimiter='/')
         for each in resp.get('CommonPrefixes'):
             match = self._month_re.match(each.get('Prefix'))
@@ -85,16 +86,17 @@ class NexradAwsInterface(object):
         >>> [u'01', u'02', u'03', u'04', u'05', u'06', u'07', u'08', u'09', u'10', u'11', u'12', u'13', u'14', u'15', u'16', u'17', u'18', u'19', u'20', u'21', u'22', u'23', u'24', u'25', u'26', u'27', u'28', u'29', u'30', u'31']
 
         :param year: the year we are requesting available days for (i.e 2010)
-        :type year: str
+        :type year: str or int
         :param month: the month we are requesting available days for (i.e. 05)
-        :type month: str
+        :type month: str or int
         :return: A list of strings representing the days available in the given month and year
         :rtype list:
 
         """
         days = []
+        prefix = self._build_prefix(year=year, month=month, day=None, station_id=None)
         resp = self._bucket.meta.client.list_objects(Bucket='noaa-nexrad-level2',
-                                                     Prefix='{}/{}/'.format(year,month),
+                                                     Prefix=prefix.format(year, month),
                                                      Delimiter='/')
         for each in resp.get('CommonPrefixes'):
             match = self._day_re.match(each.get('Prefix'))
@@ -110,18 +112,19 @@ class NexradAwsInterface(object):
         >>> [u'DAN1', u'KABR', u'KABX', u'KAKQ', u'KAMA', u'KAMX', u'KAPX', u'KARX', u'KATX', u'KBBX', u'KBGM', u'KBHX', u'KBIS', u'KBLX', u'KBMX', u'KBOX', u'KBRO', u'KBUF', u'KBYX', u'KCAE', u'KCBW', u'KCBX', u'KCCX', u'KCLE', u'KCLX', u'KCRP', u'KCXX', u'KCYS', u'KDAX', u'KDDC', u'KDFX', u'KDGX', u'KDLH', u'KDMX', u'KDOX', u'KDTX', u'KDVN', u'KEAX', u'KEMX', u'KENX', u'KEOX', u'KEPZ', u'KESX', u'KEVX', u'KEWX', u'KEYX', u'KFCX', u'KFDR', u'KFFC', u'KFSD', u'KFSX', u'KFTG', u'KFWS', u'KGGW', u'KGJX', u'KGLD', u'KGRB', u'KGRK', u'KGRR', u'KGSP', u'KGWX', u'KGYX', u'KHDX', u'KHGX', u'KHNX', u'KHPX', u'KHTX', u'KICT', u'KICX', u'KILN', u'KILX', u'KIND', u'KINX', u'KIWA', u'KIWX', u'KJAX', u'KJGX', u'KJKL', u'KLBB', u'KLCH', u'KLGX', u'KLIX', u'KLNX', u'KLOT', u'KLRX', u'KLSX', u'KLTX', u'KLVX', u'KLWX', u'KLZK', u'KMAF', u'KMAX', u'KMBX', u'KMHX', u'KMKX', u'KMLB', u'KMOB', u'KMPX', u'KMQT', u'KMRX', u'KMSX', u'KMTX', u'KMUX', u'KMVX', u'KMXX', u'KNKX', u'KNQA', u'KOAX', u'KOHX', u'KOKX', u'KOTX', u'KPAH', u'KPBZ', u'KPDT', u'KPOE', u'KPUX', u'KRAX', u'KRGX', u'KRIW', u'KRLX', u'KRTX', u'KSFX', u'KSGF', u'KSHV', u'KSJT', u'KSOX', u'KSRX', u'KTBW', u'KTFX', u'KTLH', u'KTLX', u'KTWX', u'KTYX', u'KUDX', u'KUEX', u'KVNX', u'KVTX', u'KVWX', u'KYUX', u'PHKI', u'PHKM', u'PHMO', u'PHWA', u'TJUA']
 
         :param year: the year we are requesting available radars for (i.e 2010)
-        :type year: str
+        :type year: str or int
         :param month: the month we are requesting available radars for (i.e. 05)
-        :type month: str
+        :type month: str or int
         :param day: the day we are requesting available radars for (i.e. 01)
-        :type day: str
+        :type day: str or int
         :return: A list of string representing the radar sites available in the given day, month, and year
         :rtype list:
 
         """
         radars = []
+        prefix = self._build_prefix(year=year, month=month, day=day, station_id=None)
         resp = self._bucket.meta.client.list_objects(Bucket='noaa-nexrad-level2',
-                                                     Prefix='{}/{}/{}/'.format(year,month,day),
+                                                     Prefix=prefix.format(year, month, day),
                                                      Delimiter='/')
         for each in resp.get('CommonPrefixes'):
             match = self._radar_re.match(each.get('Prefix'))
@@ -137,11 +140,11 @@ class NexradAwsInterface(object):
         >>> [AwsNexradFile object - 2013/05/31/KTLX/KTLX20130531_000358_V06.gz, AwsNexradFile object - 2013/05/31/KTLX/KTLX20130531_000834_V06.gz, AwsNexradFile object - 2013/05/31/KTLX/KTLX20130531_001311_V06.gz,...
 
         :param year: the year we are requesting available scans for (i.e 2010)
-        :type year: str
+        :type year: str or int
         :param month: the month we are requesting available scans for (i.e. 05)
-        :type month: str
+        :type month: str or int
         :param day: the day we are requesting available scans for (i.e. 01)
-        :type day: str
+        :type day: str or int
         :param radar: the radar id we are requesting available scans for (i.e. KTLX)
         :type radar: str
         :return: A list of :class:`AwsNexradFile <nexradaws.resources.awsnexradfile.AwsNexradFile>` objects representing \
@@ -150,8 +153,9 @@ class NexradAwsInterface(object):
 
         """
         scans = []
+        prefix = self._build_prefix(year=year, month=month, day=day, station_id=radar)
         resp = self._bucket.meta.client.list_objects(Bucket='noaa-nexrad-level2',
-                                                     Prefix='{}/{}/{}/{}/'.format(year,month,day,radar),
+                                                     Prefix=prefix.format(year, month, day, radar),
                                                      Delimiter='/')
         for scan in resp.get('Contents'):
             match = self._scan_re.match(scan.get('Key'))
@@ -183,14 +187,14 @@ class NexradAwsInterface(object):
 
         """
         scans = []
-        utcstart,utcend = self._formattimerange(start,end)
-        for day in self._datetime_range(utcstart,utcend):
+        utcstart, utcend = self._formattimerange(start, end)
+        for day in self._datetime_range(utcstart, utcend):
             availscans = self.get_avail_scans('{0:0>2}'.format(day.year),
                                      '{0:0>2}'.format(day.month),
                                      '{0:0>2}'.format(day.day),
                                               radar.upper())
             for scan in availscans:
-                if self._is_within_range(utcstart,utcend,scan.scan_time):
+                if self._is_within_range(utcstart, utcend, scan.scan_time):
                     scans.append(scan)
         return scans
 
@@ -238,7 +242,40 @@ class NexradAwsInterface(object):
                                                                       downloadresults.failed_count))
         return downloadresults
 
-    def _download(self,awsnexradfile,basepath,keep_aws_folders):
+    def _build_prefix(self, year=None, month=None, day=None, station_id=None):
+        prefix = ''
+        if year is not None:
+            prefix += self._build_year_format(year)
+        if month is not None:
+            prefix += self._build_month_day_format(month)
+        if day is not None:
+            prefix += self._build_month_day_format(day)
+        if station_id is not None:
+            self._check_station_id(station_id)
+            prefix += station_id.upper() + '/'
+        return prefix
+
+    def _build_year_format(self, year):
+        if isinstance(year, int):
+            return '{:04}/'
+        elif isinstance(year, str):
+            return '{}/'
+        else:
+            return six.print_('year must be int or str type')
+
+    def _build_month_day_format(self, m_or_d):
+        if isinstance(m_or_d, int):
+            return '{:02}/'
+        elif isinstance(m_or_d, str):
+            return '{}/'
+        else:
+            return six.print_('month must be int or str type')
+
+    def _check_station_id(self, station_id):
+        if not(isinstance(station_id, str)):
+            six.print_("Radar station ID must be string")
+        
+    def _download(self, awsnexradfile, basepath, keep_aws_folders):
         dirpath, filepath = awsnexradfile.create_filepath(basepath, keep_aws_folders)
         try:
             os.makedirs(dirpath)
@@ -259,10 +296,14 @@ class NexradAwsInterface(object):
 
     def _datetime_range(self, start=None, end=None):
         span = end - start
-        for i in range(0,span.days + 1):
+        if span.seconds > 0:
+            numdays = span.days + 1
+        else:
+            numdays = span.days
+        for i in range(0, numdays + 1):
             yield start + timedelta(days=i)
 
-    def _is_within_range(self,start,end,value):
+    def _is_within_range(self, start, end, value):
         if value >= start and value <= end:
             return True
         else:
@@ -274,7 +315,7 @@ class NexradAwsInterface(object):
         else:
             return False
 
-    def _formattimerange(self,start,end):
+    def _formattimerange(self, start, end):
         if self._is_tzaware(start):
             if start.tzinfo != pytz.UTC:
                 utcstart = start.astimezone(pytz.UTC)
@@ -292,6 +333,6 @@ class NexradAwsInterface(object):
         return utcstart,utcend
 
 class NexradAwsDownloadError(Exception):
-    def __init__(self,message,awsnexradfile):
+    def __init__(self, message, awsnexradfile):
         super(NexradAwsDownloadError, self).__init__(message)
         self.awsnexradfile = awsnexradfile
