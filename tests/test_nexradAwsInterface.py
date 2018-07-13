@@ -126,4 +126,10 @@ class TestNexradAwsInterface(TestCase):
         for each in scan.key.split('/'):
             self.assertTrue(each in localfile.filepath)
 
+    def test_prefix_build(self):
+        self.assertEqual('2016/05/30/KTLX/',self.query._build_prefix(2016,5,30,'ktlx'))
+
+    def test_prefix_build_type(self):
+        self.assertRaises(TypeError, self.query._build_prefix, 2017.1)
+
 
