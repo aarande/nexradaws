@@ -70,7 +70,7 @@ class NexradAwsInterface(object):
         months = []
         prefix = self._build_prefix(year=year, month=None, day=None, station_id=None)
         resp = self._bucket.meta.client.list_objects(Bucket='noaa-nexrad-level2',
-                                                     Prefix=prefix.format(year),
+                                                     Prefix=prefix,
                                                      Delimiter='/')
         for each in resp.get('CommonPrefixes'):
             match = self._month_re.match(each.get('Prefix'))
@@ -96,7 +96,7 @@ class NexradAwsInterface(object):
         days = []
         prefix = self._build_prefix(year=year, month=month, day=None, station_id=None)
         resp = self._bucket.meta.client.list_objects(Bucket='noaa-nexrad-level2',
-                                                     Prefix=prefix.format(year, month),
+                                                     Prefix=prefix,
                                                      Delimiter='/')
         for each in resp.get('CommonPrefixes'):
             match = self._day_re.match(each.get('Prefix'))
@@ -124,7 +124,7 @@ class NexradAwsInterface(object):
         radars = []
         prefix = self._build_prefix(year=year, month=month, day=day, station_id=None)
         resp = self._bucket.meta.client.list_objects(Bucket='noaa-nexrad-level2',
-                                                     Prefix=prefix.format(year, month, day),
+                                                     Prefix=prefix,
                                                      Delimiter='/')
         for each in resp.get('CommonPrefixes'):
             match = self._radar_re.match(each.get('Prefix'))
@@ -155,7 +155,7 @@ class NexradAwsInterface(object):
         scans = []
         prefix = self._build_prefix(year=year, month=month, day=day, station_id=radar)
         resp = self._bucket.meta.client.list_objects(Bucket='noaa-nexrad-level2',
-                                                     Prefix=prefix.format(year, month, day, radar),
+                                                     Prefix=prefix,
                                                      Delimiter='/')
         for scan in resp.get('Contents'):
             match = self._scan_re.match(scan.get('Key'))
@@ -251,29 +251,30 @@ class NexradAwsInterface(object):
         if day is not None:
             prefix += self._build_month_day_format(day)
         if station_id is not None:
-            self._check_station_id(station_id)
-            prefix += station_id.upper() + '/'
+            prefix += self._check_station_id(station_id)
         return prefix
 
     def _build_year_format(self, year):
         if isinstance(year, int):
-            return '{:04}/'
+            return '{:04}/'.format(year)
         elif isinstance(year, str):
-            return '{}/'
+            return '{}/'.format(year)
         else:
-            return six.print_('year must be int or str type')
+            raise TypeError('Year must be int or str type')
 
     def _build_month_day_format(self, m_or_d):
         if isinstance(m_or_d, int):
-            return '{:02}/'
+            return '{:02}/'.format(m_or_d)
         elif isinstance(m_or_d, str):
-            return '{}/'
+            return '{}/'.format(m_or_d)
         else:
-            return six.print_('month must be int or str type')
+            raise TypeError('Month must be int or str type')
 
     def _check_station_id(self, station_id):
         if not(isinstance(station_id, str)):
-            six.print_("Radar station ID must be string")
+            raise TypeError('Radar station ID must be string')
+        else:
+            return '{}/'.format(station_id.upper())
         
     def _download(self, awsnexradfile, basepath, keep_aws_folders):
         dirpath, filepath = awsnexradfile.create_filepath(basepath, keep_aws_folders)
