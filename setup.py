@@ -1,8 +1,8 @@
-from distutils.core import setup
+import setuptools
 
-setup(
+setuptools.setup(
     name='nexradaws',
-    version='1.0.1',
+    version='1.1',
     packages=['nexradaws','nexradaws.resources'],
     description= 'Query and download NEXRAD data from AWS S3 storage.',
     long_description= '''This module is designed to allow you to query and download Nexrad
@@ -35,13 +35,13 @@ Docs - http://nexradaws.readthedocs.io/en/latest/
     pip install nexradaws
 
 **Version 1.1**
-* Better support for varying filenames over the years (Thanks Nick Guy for the PR!)''',
+* Bug fix for varying filename extensions over the years (.gz .V06 etc). Thanks Nick Guy for the PR!''',
     url='https://github.com/aarande/nexradaws',
     license='MIT',
     author='Aaron Anderson',
     author_email='aaron.anderson74@yahoo.com',
     keywords='weather,radar,nexrad,aws,amazon',
-    download_url='https://github.com/aarande/nexradaws/archive/1.0.tar.gz',
+    download_url='https://github.com/aarande/nexradaws/archive/1.1.tar.gz',
     install_requires=['boto3','pytz','six'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',

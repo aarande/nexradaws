@@ -41,7 +41,7 @@ Please feel free to submit Pull Requests for any fixes or enhancements.
 
 **New in Version 1.1**
 
-* Better support for varying filenames over the years (Thanks Nick Guy for the PR!)
+* Bug fix for varying filename extensions over the years (.gz .V06 etc). Thanks Nick Guy for the PR!
 
 Contents:
 

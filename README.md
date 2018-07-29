@@ -28,4 +28,4 @@ Docs - http://nexradaws.readthedocs.io/en/latest/
     pip install nexradaws
 
 New in version 1.1:
-* Better support for varying filenames over the years (Thanks Nick Guy for the PR!)
+* Bug fix for varying filename extensions over the years (.gz .V06 etc). Thanks Nick Guy for the PR!
