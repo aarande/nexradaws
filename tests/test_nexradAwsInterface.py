@@ -101,7 +101,6 @@ class TestNexradAwsInterface(TestCase):
         scans = self.query.get_avail_scans('2017', '05', '31', 'KTLX')
         scan = scans[0]
         dirpath,filepath = scan.create_filepath(self.templocation,False)
-        print filepath
         results = self.query.download(scan,self.templocation)
         self.assertTrue(os.path.isfile(filepath))
         self.assertEqual(results.failed_count,0)
