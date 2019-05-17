@@ -189,10 +189,11 @@ class NexradAwsInterface(object):
         scans = []
         utcstart, utcend = self._formattimerange(start, end)
         for day in self._datetime_range(utcstart, utcend):
-            availscans = self.get_avail_scans('{0:0>2}'.format(day.year),
-                                     '{0:0>2}'.format(day.month),
-                                     '{0:0>2}'.format(day.day),
-                                              radar.upper())
+            if day < utcend:
+                availscans = self.get_avail_scans('{0:0>2}'.format(day.year),
+                                        '{0:0>2}'.format(day.month),
+                                        '{0:0>2}'.format(day.day),
+                                                radar.upper())
             for scan in availscans:
                 if self._is_within_range(utcstart, utcend, scan.scan_time):
                     scans.append(scan)
