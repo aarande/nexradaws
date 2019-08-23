@@ -158,6 +158,7 @@ class NexradAwsInterface(object):
                                                      Prefix=prefix,
                                                      Delimiter='/')
         for scan in resp.get('Contents'):
+            if scan.get('Key').endswith(".tar"): continue
             match = self._scan_re.match(scan.get('Key'))
             if match is not None:
                 scans.append(AwsNexradFile(scan))
