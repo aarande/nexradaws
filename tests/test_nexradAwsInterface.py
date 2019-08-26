@@ -55,6 +55,10 @@ class TestNexradAwsInterface(TestCase):
         scans = self.query.get_avail_scans('2006', '05', '31', 'KTLX')
         self.assertIsInstance(scans, list)
 
+    def test_get_available_scan_missing(self):
+        scans = self.query.get_avail_scans('1991', '05', '31', 'KTLX')
+        self.assertEqual(scans, [])
+
     def test_get_available_scans_in_range(self):
         start = datetime(2013, 5, 20, 18, 00)
         end = datetime(2013, 5, 20, 22, 00)

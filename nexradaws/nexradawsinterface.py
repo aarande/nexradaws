@@ -47,7 +47,8 @@ class NexradAwsInterface(object):
         """
         years = []
         resp = self._bucket.meta.client.list_objects(Bucket='noaa-nexrad-level2',Delimiter='/')
-        for each in resp.get('CommonPrefixes'):
+
+        for each in resp.get('CommonPrefixes', []):
             match = self._year_re.match(each.get('Prefix'))
             if match is not None:
                 years.append(match.group(1))
@@ -72,7 +73,7 @@ class NexradAwsInterface(object):
         resp = self._bucket.meta.client.list_objects(Bucket='noaa-nexrad-level2',
                                                      Prefix=prefix,
                                                      Delimiter='/')
-        for each in resp.get('CommonPrefixes'):
+        for each in resp.get('CommonPrefixes', []):
             match = self._month_re.match(each.get('Prefix'))
             if match is not None:
                 months.append(match.group(1))
@@ -98,7 +99,7 @@ class NexradAwsInterface(object):
         resp = self._bucket.meta.client.list_objects(Bucket='noaa-nexrad-level2',
                                                      Prefix=prefix,
                                                      Delimiter='/')
-        for each in resp.get('CommonPrefixes'):
+        for each in resp.get('CommonPrefixes', []):
             match = self._day_re.match(each.get('Prefix'))
             if match is not None:
                 days.append(match.group(1))
@@ -126,7 +127,7 @@ class NexradAwsInterface(object):
         resp = self._bucket.meta.client.list_objects(Bucket='noaa-nexrad-level2',
                                                      Prefix=prefix,
                                                      Delimiter='/')
-        for each in resp.get('CommonPrefixes'):
+        for each in resp.get('CommonPrefixes', []):
             match = self._radar_re.match(each.get('Prefix'))
             if match is not None:
                 radars.append(match.group(1))
@@ -157,7 +158,7 @@ class NexradAwsInterface(object):
         resp = self._bucket.meta.client.list_objects(Bucket='noaa-nexrad-level2',
                                                      Prefix=prefix,
                                                      Delimiter='/')
-        for scan in resp.get('Contents'):
+        for scan in resp.get('Contents', []):
             match = self._scan_re.match(scan.get('Key'))
             if match is not None:
                 scans.append(AwsNexradFile(scan))
