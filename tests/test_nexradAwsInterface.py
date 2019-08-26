@@ -40,16 +40,28 @@ class TestNexradAwsInterface(TestCase):
         six.assertCountEqual(self, months, examplemonths)
         self.assertEqual(12, len(months))
 
+    def test_get_available_months_missing(self):
+        months = self.query.get_avail_months('1900')
+        self.assertEqual(months, [])
+
     def test_get_available_days(self):
         days = self.query.get_avail_days('2006', '05')
         self.assertIsInstance(days, list)
         self.assertEqual(31, len(days))
         six.assertCountEqual(self, days, exampledays)
 
+    def test_get_available_days_missing(self):
+        days = self.query.get_avail_days('2006', '13')
+        self.assertEqual(days, [])
+
     def test_get_available_radars(self):
         radars = self.query.get_avail_radars('2006', '05', '31')
         self.assertIsInstance(radars, list)
         self.assertTrue('KTLX' in radars)
+
+    def test_get_available_radars_missing(self):
+        radars = self.query.get_avail_radars('1900', '05', '31')
+        self.assertEqual(radars, [])
 
     def test_get_available_scans(self):
         scans = self.query.get_avail_scans('2006', '05', '31', 'KTLX')
