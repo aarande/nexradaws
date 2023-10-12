@@ -1,6 +1,6 @@
 import os
 import re
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 
 import boto3
 import errno
@@ -189,14 +189,25 @@ class NexradAwsInterface(object):
         """
         scans = []
         utcstart, utcend = self._formattimerange(start, end)
+
+        # Check that the dates are not in the future
+        if self._is_future(utcstart):
+            raise ValueError("Future start date specified, please check start input")
+        if self._is_future(utcend):
+            utcend = datetime.now(timezone.utc)
+            six.print_("Future end date specified, changing to current time")
+
         for day in self._datetime_range(utcstart, utcend):
-            availscans = self.get_avail_scans('{0:0>2}'.format(day.year),
-                                     '{0:0>2}'.format(day.month),
-                                     '{0:0>2}'.format(day.day),
-                                              radar.upper())
-            for scan in availscans:
-                if self._is_within_range(utcstart, utcend, scan.scan_time):
-                    scans.append(scan)
+            if self._is_future(day):
+                pass
+            else:
+                availscans = self.get_avail_scans('{0:0>2}'.format(day.year),
+                                        '{0:0>2}'.format(day.month),
+                                        '{0:0>2}'.format(day.day),
+                                                radar.upper())
+                for scan in availscans:
+                    if self._is_within_range(utcstart, utcend, scan.scan_time):
+                        scans.append(scan)
         return scans
 
     def download(self, awsnexradfiles, basepath, keep_aws_folders=False, threads=6):
@@ -276,7 +287,10 @@ class NexradAwsInterface(object):
             raise TypeError('Radar station ID must be string')
         else:
             return '{}/'.format(station_id.upper())
-        
+
+    def _is_future(self, utc_dt):
+        return utc_dt > datetime.now(timezone.utc)
+
     def _download(self, awsnexradfile, basepath, keep_aws_folders):
         dirpath, filepath = awsnexradfile.create_filepath(basepath, keep_aws_folders)
         try:
@@ -306,10 +320,7 @@ class NexradAwsInterface(object):
             yield start + timedelta(days=i)
 
     def _is_within_range(self, start, end, value):
-        if value >= start and value <= end:
-            return True
-        else:
-            return False
+        return start <= value <= end
 
     def _is_tzaware(self,d):
         if d.tzinfo is not None and d.tzinfo.utcoffset(d) is not None:
