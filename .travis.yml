@@ -1,14 +1,12 @@
 language: python
 
 python:
-  - "2.7"
   - "3.6"
 
 install:
   - pip install boto3
   - pip install codecov
   - pip install coverage
-  - pip install six
   - pip install pytz
 
 script:

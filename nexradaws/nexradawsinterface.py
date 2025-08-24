@@ -5,7 +5,6 @@ from datetime import datetime, timedelta, timezone
 import boto3
 import errno
 import pytz
-import six
 from botocore.handlers import disable_signing
 
 from .resources.downloadresults import DownloadResults
@@ -195,7 +194,7 @@ class NexradAwsInterface(object):
             raise ValueError("Future start date specified, please check start input")
         if self._is_future(utcend):
             utcend = datetime.now(timezone.utc)
-            six.print_("Future end date specified, changing to current time")
+            print("Future end date specified, changing to current time")
 
         for day in self._datetime_range(utcstart, utcend):
             if self._is_future(day):
@@ -242,16 +241,16 @@ class NexradAwsInterface(object):
                 try:
                     result = future.result()
                     localfiles.append(result)
-                    six.print_("Downloaded {}".format(result.filename))
+                    print("Downloaded {}".format(result.filename))
                 except NexradAwsDownloadError:
                     error = future.exception()
                     errors.append(error.awsnexradfile)
         # Sort returned list of NexradLocalFile objects by the scan_time
         localfiles.sort(key=lambda x:x.scan_time)
         downloadresults = DownloadResults(localfiles,errors)
-        six.print_('{} out of {} files downloaded...{} errors'.format(downloadresults.success_count,
-                                                                      downloadresults.total,
-                                                                      downloadresults.failed_count))
+        print('{} out of {} files downloaded...{} errors'.format(downloadresults.success_count,
+                                                                 downloadresults.total,
+                                                                 downloadresults.failed_count))
         return downloadresults
 
     def _build_prefix(self, year=None, month=None, day=None, station_id=None):

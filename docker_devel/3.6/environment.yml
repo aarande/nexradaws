@@ -11,6 +11,5 @@ dependencies:
   - arm_pyart
   - basemap
   - pytz
-  - six
   - pip:
     - nbsphinx

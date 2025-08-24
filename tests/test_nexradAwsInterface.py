@@ -4,7 +4,6 @@ import tempfile
 from unittest import TestCase
 
 import pytz
-import six
 from datetime import datetime
 
 import nexradaws
@@ -37,7 +36,7 @@ class TestNexradAwsInterface(TestCase):
     def test_get_available_months(self):
         months = self.query.get_avail_months('2006')
         self.assertIsInstance(months, list)
-        six.assertCountEqual(self, months, examplemonths)
+        self.assertCountEqual(months, examplemonths)
         self.assertEqual(12, len(months))
 
     def test_get_available_months_missing(self):
@@ -48,7 +47,7 @@ class TestNexradAwsInterface(TestCase):
         days = self.query.get_avail_days('2006', '05')
         self.assertIsInstance(days, list)
         self.assertEqual(31, len(days))
-        six.assertCountEqual(self, days, exampledays)
+        self.assertCountEqual(days, exampledays)
 
     def test_get_available_days_missing(self):
         days = self.query.get_avail_days('2006', '13')
