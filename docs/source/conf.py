@@ -40,6 +40,8 @@ extensions = [
 ]
 
 nbsphinx_timeout = 500
+# Do not execute notebooks during the docs build (RTD uses a light env)
+nbsphinx_execute = 'never'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

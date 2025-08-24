@@ -43,3 +43,41 @@ jobs:
           files: coverage.xml
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
+
+  render-notebook:
+    name: Render Tutorial notebook to static HTML
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      
+      - name: Install nbconvert and jupyter
+        run: |
+          python -m pip install --upgrade pip
+          pip install nbconvert jupyter
+      
+      - name: Convert Tutorial.ipynb to HTML (no execution)
+        run: |
+          jupyter nbconvert --to html docs/source/Tutorial.ipynb --output tutorial.html
+          mkdir -p docs/source/_static
+          mv docs/source/tutorial.html docs/source/_static/tutorial.html
+      
+      - name: Commit static HTML if changed
+        run: |
+          if git diff --quiet docs/source/_static/tutorial.html; then
+            echo "No changes to tutorial.html"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add docs/source/_static/tutorial.html
+            git commit -m "CI: update pre-rendered tutorial HTML"
+            git push
+          fi

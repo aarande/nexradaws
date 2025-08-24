@@ -11,7 +11,7 @@ radar files from Amazon Web Services S3 Storage. The real-time feed and full his
 resolution (Level II) NEXRAD data, from June 1991 to present, is now freely available on Amazon S3 for anyone to use.
 More information can be found here https://aws.amazon.com/public-datasets/nexrad/.
 
-nexradaws supports Python 3.6+.
+nexradaws supports Python 3.8+.
 
 Github - https://github.com/aarande/nexradaws
 
@@ -43,6 +43,9 @@ Please feel free to submit Pull Requests for any fixes or enhancements.
 * Bug fix for varying filename extensions over the years (.gz .V06 etc). Thanks Nick Guy for the PR!
 
 Contents:
+
+- Static tutorial (HTML pre-rendered by CI):
+  :download:`Open tutorial <_static/tutorial.html>`
 
 .. toctree::
    :maxdepth: 2
