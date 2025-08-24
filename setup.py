@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name='nexradaws',
-    version='1.1',
+    version='2.0.0',
     packages=['nexradaws','nexradaws.resources'],
     description= 'Query and download NEXRAD data from AWS S3 storage.',
     long_description= '''This module is designed to allow you to query and download Nexrad
@@ -12,7 +12,7 @@ More information can be found here https://aws.amazon.com/public-datasets/nexrad
 
 If pyart is installed nexradaws allows you to quickly get pyart objects of downloaded files.
 
-nexradaws supports Python 2.7 and Python 3.6.
+nexradaws supports Python 3.6+.
 
 Github - https://github.com/aarande/nexradaws
 
@@ -24,7 +24,6 @@ Docs - http://nexradaws.readthedocs.io/en/latest/
 
 * boto3
 * pytz
-* six
 
 **Optional dependencies**
 
@@ -34,21 +33,23 @@ Docs - http://nexradaws.readthedocs.io/en/latest/
 
     pip install nexradaws
 
-**Version 1.1**
+**Version 2.0.0**
+* Drop support for Python 2.7 and remove dependency on six.
 * Bug fix for varying filename extensions over the years (.gz .V06 etc). Thanks Nick Guy for the PR!''',
     url='https://github.com/aarande/nexradaws',
     license='MIT',
     author='Aaron Anderson',
     author_email='aaron.anderson74@yahoo.com',
     keywords='weather,radar,nexrad,aws,amazon',
-    download_url='https://github.com/aarande/nexradaws/archive/1.1.tar.gz',
-    install_requires=['boto3','pytz','six'],
+    download_url='https://github.com/aarande/nexradaws/archive/2.0.0.tar.gz',
+    install_requires=['boto3','pytz'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: MIT License',
         'Topic :: Scientific/Engineering :: Atmospheric Science',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: Python :: 3.6',
     ],
 )
