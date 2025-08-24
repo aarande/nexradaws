@@ -12,7 +12,7 @@ More information can be found here https://aws.amazon.com/public-datasets/nexrad
 
 If pyart is installed nexradaws allows you to quickly get pyart objects of downloaded files.
 
-nexradaws supports Python 3.6+.
+nexradaws supports Python 3.8+.
 
 Github - https://github.com/aarande/nexradaws
 
@@ -43,6 +43,7 @@ Docs - http://nexradaws.readthedocs.io/en/latest/
     keywords='weather,radar,nexrad,aws,amazon',
     download_url='https://github.com/aarande/nexradaws/archive/2.0.0.tar.gz',
     install_requires=['boto3','pytz'],
+    python_requires='>=3.8',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Science/Research',
@@ -50,6 +51,10 @@ Docs - http://nexradaws.readthedocs.io/en/latest/
         'Topic :: Scientific/Engineering :: Atmospheric Science',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3 :: Only',
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
     ],
 )

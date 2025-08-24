@@ -1,5 +1,0 @@
-boto3
-coverage
-six
-pytz
-sphinx

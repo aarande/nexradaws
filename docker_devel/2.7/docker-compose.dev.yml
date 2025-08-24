@@ -1,9 +1,0 @@
-version: '2'
-
-services:
-  app:
-    container_name: nexradaws2.7
-    build: .
-    image: aarande/nexradaws:2.7
-    volumes:
-    - .:/app
