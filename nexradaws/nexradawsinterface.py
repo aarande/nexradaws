@@ -32,7 +32,7 @@ class NexradAwsInterface(object):
         self._scan_re = re.compile(r'^\d{4}/\d{2}/\d{2}/..../(?:(?=(.*.gz))|(?=(.*V0*.gz))|(?=(.*V0*)))')
         self._s3conn = boto3.resource('s3')
         self._s3conn.meta.client.meta.events.register('choose-signer.s3.*', disable_signing)
-        self._bucket = self._s3conn.Bucket('noaa-nexrad-level2')
+        self._bucket = self._s3conn.Bucket('unidata-nexrad-level2')
 
     def get_avail_years(self):
         """
@@ -46,7 +46,7 @@ class NexradAwsInterface(object):
 
         """
         years = []
-        resp = self._bucket.meta.client.list_objects(Bucket='noaa-nexrad-level2',Delimiter='/')
+        resp = self._bucket.meta.client.list_objects(Bucket='unidata-nexrad-level2',Delimiter='/')
 
         for each in resp.get('CommonPrefixes', []):
             match = self._year_re.match(each.get('Prefix'))
@@ -70,7 +70,7 @@ class NexradAwsInterface(object):
         """
         months = []
         prefix = self._build_prefix(year=year, month=None, day=None, station_id=None)
-        resp = self._bucket.meta.client.list_objects(Bucket='noaa-nexrad-level2',
+        resp = self._bucket.meta.client.list_objects(Bucket='unidata-nexrad-level2',
                                                      Prefix=prefix,
                                                      Delimiter='/')
         for each in resp.get('CommonPrefixes', []):
@@ -96,7 +96,7 @@ class NexradAwsInterface(object):
         """
         days = []
         prefix = self._build_prefix(year=year, month=month, day=None, station_id=None)
-        resp = self._bucket.meta.client.list_objects(Bucket='noaa-nexrad-level2',
+        resp = self._bucket.meta.client.list_objects(Bucket='unidata-nexrad-level2',
                                                      Prefix=prefix,
                                                      Delimiter='/')
         for each in resp.get('CommonPrefixes', []):
@@ -124,7 +124,7 @@ class NexradAwsInterface(object):
         """
         radars = []
         prefix = self._build_prefix(year=year, month=month, day=day, station_id=None)
-        resp = self._bucket.meta.client.list_objects(Bucket='noaa-nexrad-level2',
+        resp = self._bucket.meta.client.list_objects(Bucket='unidata-nexrad-level2',
                                                      Prefix=prefix,
                                                      Delimiter='/')
         for each in resp.get('CommonPrefixes', []):
@@ -155,7 +155,7 @@ class NexradAwsInterface(object):
         """
         scans = []
         prefix = self._build_prefix(year=year, month=month, day=day, station_id=radar)
-        resp = self._bucket.meta.client.list_objects(Bucket='noaa-nexrad-level2',
+        resp = self._bucket.meta.client.list_objects(Bucket='unidata-nexrad-level2',
                                                      Prefix=prefix,
                                                      Delimiter='/')
         for scan in resp.get('Contents', []):
@@ -304,7 +304,7 @@ class NexradAwsInterface(object):
         try:
             s3 = boto3.client('s3')
             s3.meta.events.register('choose-signer.s3.*', disable_signing)
-            s3.download_file('noaa-nexrad-level2',awsnexradfile.key,filepath)
+            s3.download_file('unidata-nexrad-level2',awsnexradfile.key,filepath)
             return LocalNexradFile(awsnexradfile, filepath)
         except:
             message = 'Download failed for {}'.format(awsnexradfile.filename)
