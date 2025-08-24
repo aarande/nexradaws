@@ -1,3 +1,32 @@
 [build-system]
 requires = ["setuptools>=61", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "nexradaws"
+version = "2.0.0"
+description = "Query and download NEXRAD data from AWS S3 storage."
+readme = "README.md"
+requires-python = ">=3.8"
+authors = [
+    { name = "Aaron Anderson"}
+]
+license = { text = "MIT" }
+keywords = ["weather", "radar", "nexrad", "aws", "amazon"]
+dependencies = [
+    "boto3",
+    "pytz"
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Scientific/Engineering :: Atmospheric Science",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12"
+]
