@@ -1,7 +1,8 @@
 channels:
   - conda-forge
 dependencies:
-  - python==3.6
+  - python==3.8
+  - pip
   - sphinx>=1.4
   - pandoc
   - nbconvert
@@ -11,4 +12,5 @@ dependencies:
   - basemap
   - pytz
   - pip:
+    - pip
     - nbsphinx
