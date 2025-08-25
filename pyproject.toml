@@ -11,7 +11,7 @@ requires-python = ">=3.8"
 authors = [
     { name = "Aaron Anderson"}
 ]
-license = "MIT"
+license = {text = "MIT"}
 keywords = ["weather", "radar", "nexrad", "aws", "amazon"]
 dependencies = [
     "boto3",
