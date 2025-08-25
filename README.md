@@ -25,6 +25,14 @@ Docs - http://nexradaws.readthedocs.io/en/latest/
 **Install with pip**::
 
     pip install nexradaws
+    pip install nexradaws[pyart] - to install with pyart support   
+
+New in version 2.0:
+* Updated to support Python 3.8+, dropped support for Python 2.7.
+* Update to new bucket names for NEXRAD data.
+* Fix for NoneType when time is in future
 
 New in version 1.1:
 * Bug fix for varying filename extensions over the years (.gz .V06 etc). Thanks Nick Guy for the PR!
+
+
