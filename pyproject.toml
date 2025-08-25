@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0.0", "wheel"]
+requires = ["setuptools>=77.0.3", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -11,7 +11,8 @@ requires-python = ">=3.8"
 authors = [
     { name = "Aaron Anderson"}
 ]
-license = { file = "LICENSE" }
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
 keywords = ["weather", "radar", "nexrad", "aws", "amazon"]
 dependencies = [
     "boto3",
@@ -29,6 +30,12 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12"
 ]
+
+[project.urls]
+Homepage = "https://nexradaws.readthedocs.io/en/latest/"
+Documentation = "https://nexradaws.readthedocs.io/en/latest/"
+Repository = "https://github.com/aarande/nexradaws"
+Issues = "https://github.com/aarande/nexradaws/issues"
 
 [tool.setuptools]
 packages = ["nexradaws"]
