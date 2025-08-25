@@ -18,8 +18,10 @@ jobs:
           python-version: "3.11"
 
       - name: Install build backend and latest build tools
-        run: |
-          python -m pip install --upgrade pip setuptools wheel build
+        run: python -m pip install --upgrade pip setuptools wheel build
+
+      - name: Clean dist directory
+        run: rm -rf dist build *.egg-info
 
       - name: Build sdist and wheel
         run: python -m build
