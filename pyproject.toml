@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61", "wheel"]
+requires = ["setuptools>=61.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -11,8 +11,7 @@ requires-python = ">=3.8"
 authors = [
     { name = "Aaron Anderson"}
 ]
-license = "MIT"
-license-files = ["LICEN[CS]E*"]
+license = { file = "LICENSE" }
 keywords = ["weather", "radar", "nexrad", "aws", "amazon"]
 dependencies = [
     "boto3",
@@ -30,3 +29,6 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12"
 ]
+
+[tool.setuptools]
+packages = ["nexradaws"]
