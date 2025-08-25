@@ -12,7 +12,6 @@ authors = [
     { name = "Aaron Anderson"}
 ]
 license = "MIT"
-license-files = ["LICEN[CS]E*"]
 keywords = ["weather", "radar", "nexrad", "aws", "amazon"]
 dependencies = [
     "boto3",
