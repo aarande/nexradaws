@@ -44,6 +44,10 @@ jobs:
           name: dist
           path: dist
 
+      - name: Debug Show METADATA fields
+        run: |
+          unzip -p dist/*.whl *.dist-info/METADATA
+
       - name: List dist contents
         run: ls -lh dist
 

@@ -39,5 +39,5 @@ Issues = "https://github.com/aarande/nexradaws/issues"
 [project.optional-dependencies]
 pyart = ["arm_pyart"]
 
-[tool.setuptools]
-packages = ["nexradaws"]
+[tool.setuptools.packages.find]
+where = ["."]
