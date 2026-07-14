@@ -5,12 +5,23 @@ from datetime import datetime, timedelta, timezone
 import boto3
 import errno
 import pytz
+from botocore.config import Config
 from botocore.handlers import disable_signing
 
 from .resources.downloadresults import DownloadResults
 from .resources.localnexradfile import LocalNexradFile
 from .resources.awsnexradfile import AwsNexradFile
 import concurrent.futures
+
+# boto3's default client has no read/connect timeout, so a single stalled
+# connection to the mirror bucket can block a download indefinitely with no
+# error and no output. These defaults keep a stuck connection bounded and
+# retry a few times before giving up, instead of hanging silently.
+DEFAULT_DOWNLOAD_CONFIG = Config(
+    connect_timeout=30,
+    read_timeout=180,
+    retries={'max_attempts': 5, 'mode': 'standard'},
+)
 
 class NexradAwsInterface(object):
     """
@@ -209,7 +220,7 @@ class NexradAwsInterface(object):
                         scans.append(scan)
         return scans
 
-    def download(self, awsnexradfiles, basepath, keep_aws_folders=False, threads=6):
+    def download(self, awsnexradfiles, basepath, keep_aws_folders=False, threads=6, boto3_config=None):
         """
         This method will download the passed AwsNexradFile object(s) to the given basepath folder.
         If keep_aws_folders is True then subfolders will be created under the basepath with the same
@@ -224,6 +235,10 @@ class NexradAwsInterface(object):
         :type keep_aws_folders: bool
         :param threads: number of download threads to utilize (default=6)
         :type threads: int
+        :param boto3_config: botocore ``Config`` used for the S3 client that downloads each file
+         (default sets a 30s connect / 180s read timeout with 5 retries, so a stalled connection
+         on an unreliable network fails and retries instead of hanging indefinitely)
+        :type boto3_config: botocore.config.Config or None
         :return: A :class:`DownloadResults <nexradaws.resources.downloadresults.DownloadResults>` object that contains \
         successful downloads as :class:`LocalNexradFile <nexradaws.resources.localnexradfile.LocalNexradFile>` objects \
         as well as any :class:`AwsNexradFile <nexradaws.resources.awsnexradfile.AwsNexradFile>` objects that failed
@@ -233,10 +248,12 @@ class NexradAwsInterface(object):
         # If only a single AwsNexradFile object is passed convert to a list
         if type(awsnexradfiles) == AwsNexradFile:
             awsnexradfiles = [awsnexradfiles]
+        if boto3_config is None:
+            boto3_config = DEFAULT_DOWNLOAD_CONFIG
         localfiles = []
         errors = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
-            future_download = {executor.submit(self._download,nexradfile,basepath,keep_aws_folders): nexradfile for nexradfile in awsnexradfiles}
+            future_download = {executor.submit(self._download,nexradfile,basepath,keep_aws_folders,boto3_config): nexradfile for nexradfile in awsnexradfiles}
             for future in concurrent.futures.as_completed(future_download):
                 try:
                     result = future.result()
@@ -290,7 +307,7 @@ class NexradAwsInterface(object):
     def _is_future(self, utc_dt):
         return utc_dt > datetime.now(timezone.utc)
 
-    def _download(self, awsnexradfile, basepath, keep_aws_folders):
+    def _download(self, awsnexradfile, basepath, keep_aws_folders, boto3_config=None):
         dirpath, filepath = awsnexradfile.create_filepath(basepath, keep_aws_folders)
         try:
             os.makedirs(dirpath)
@@ -301,7 +318,7 @@ class NexradAwsInterface(object):
                 raise
 
         try:
-            s3 = boto3.client('s3')
+            s3 = boto3.client('s3', config=boto3_config or DEFAULT_DOWNLOAD_CONFIG)
             s3.meta.events.register('choose-signer.s3.*', disable_signing)
             s3.download_file('unidata-nexrad-level2',awsnexradfile.key,filepath)
             return LocalNexradFile(awsnexradfile, filepath)
